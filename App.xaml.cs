@@ -10,6 +10,12 @@ public partial class App : Application
     protected override Window CreateWindow(IActivationState? activationState)
     {
         AppShell appShell = new();
-        return new Window(appShell);
+        return new Window(appShell)
+        {
+#if DEBUG && WINDOWS
+            Height = 640,
+            Width = 360,
+#endif
+        };
     }
 }

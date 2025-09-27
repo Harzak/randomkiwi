@@ -7,8 +7,33 @@
              x:Name="OverviewPage"
              x:DataType="pageModels:MainViewModel">
 
-    <ScrollView>
-        <Label Text="{Binding Title}" />
-    </ScrollView>
+    <Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
+        <WebView Grid.Row="0" Grid.Column="0"
+                 Source="https://en.m.wikipedia.org/wiki/Special:Random" />
+        <HorizontalStackLayout Grid.Row="1" Grid.Column="0"
+                               HeightRequest="70" HorizontalOptions="Center">
+            <ImageButton Margin="20,0"
+                         Aspect="Center"
+                         Command="{Binding PreviousArticleCommand}"
+                         HeightRequest="44" HorizontalOptions="End"
+                         Source="{StaticResource IconGoBack}"
+                         VerticalOptions="Center" WidthRequest="44" />
+
+            <ImageButton Margin="20,0"
+                         Aspect="Center"
+                         Command="{Binding NextArticleCommand}"
+                         HeightRequest="44" HorizontalOptions="End"
+                         Source="{StaticResource IconRefresh}"
+                         VerticalOptions="Center" WidthRequest="44" />
+
+            <ImageButton Margin="20,0"
+                         Aspect="Center"
+                         Command="{Binding AddBookmarkCommand}"
+                         HeightRequest="44" HorizontalOptions="End"
+                         Source="{StaticResource IconBookmark}"
+                         VerticalOptions="Center" WidthRequest="44" />
+
+        </HorizontalStackLayout>
+    </Grid>
 
 </ContentPage>

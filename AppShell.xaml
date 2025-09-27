@@ -2,11 +2,26 @@
 <Shell x:Class="randomkiwi.AppShell"
        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       xmlns:local="clr-namespace:randomkiwi"
-       Title="randomkiwi">
+       xmlns:views="clr-namespace:randomkiwi.Views"
+       Title="title here">
+
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="*,Auto">
+
+            <ImageButton Grid.Column="0"
+                         Aspect="Center" HeightRequest="44" HorizontalOptions="Center"
+                         Source="{StaticResource IconRandomKiwi}"
+                         VerticalOptions="Center" WidthRequest="44" />
+
+            <ImageButton Grid.Column="1"
+                         Aspect="Center" HeightRequest="44" HorizontalOptions="End"
+                         Source="{StaticResource IconMore}"
+                         VerticalOptions="Center" WidthRequest="44" />
+        </Grid>
+    </Shell.TitleView>
 
     <ShellContent Title="Home"
-                  ContentTemplate="{DataTemplate local:Views.MainView}"
+                  ContentTemplate="{DataTemplate views:MainView}"
                   Route="MainPage" />
 
 </Shell>
