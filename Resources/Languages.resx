@@ -117,7 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Appearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="AppLanguage" xml:space="preserve">
+    <value>App Language</value>
+  </data>
+  <data name="Bookmarks" xml:space="preserve">
+    <value>Bookmarks</value>
+  </data>
   <data name="Display" xml:space="preserve">
     <value>Display</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Languages</value>
+  </data>
+  <data name="NoBookmarksAvailable" xml:space="preserve">
+    <value>No bookmarks available.</value>
+  </data>
+  <data name="randomkiwi" xml:space="preserve">
+    <value>randomkiwi</value>
+  </data>
+  <data name="SelectAppColor" xml:space="preserve">
+    <value>Select the app color scheme.</value>
+  </data>
+  <data name="SelectAppLanguage" xml:space="preserve">
+    <value>Select your default app language.</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
 </root>

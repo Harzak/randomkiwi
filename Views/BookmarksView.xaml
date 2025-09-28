@@ -3,12 +3,13 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pullToRefreshControl="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:res="clr-namespace:randomkiwi.Resources"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
              Title="BookmarksView"
              x:DataType="viewModels:BookmarksViewModel">
 
-    <pullToRefreshControl:SfPullToRefresh TransitionMode="Push"  x:Name="pullToRefresh">
+    <pullToRefreshControl:SfPullToRefresh x:Name="pullToRefresh" TransitionMode="Push">
         <pullToRefreshControl:SfPullToRefresh.PullableContent>
             <Grid>
                 <CollectionView ItemsSource="{Binding Bookmarks}" SelectionMode="Single">
@@ -62,7 +63,9 @@
 
                     <CollectionView.EmptyView>
                         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                            <Label FontSize="18" Text="No bookmarks available" TextColor="Gray" />
+                            <Label FontSize="18"
+                                   Text="{x:Static res:Languages.NoBookmarksAvailable}"
+                                   TextColor="Gray" />
                         </StackLayout>
                     </CollectionView.EmptyView>
 

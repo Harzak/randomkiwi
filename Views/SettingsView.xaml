@@ -11,7 +11,8 @@
 
         <!--  App language  -->
         <Label Margin="5,10"
-               FontSize="12" Text="Languages" />
+               FontSize="12"
+               Text="{x:Static res:Languages.Language}" />
         <Border Padding="10">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
@@ -19,21 +20,23 @@
 
             <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" Grid.Column="0"
-                       Text="App Language" VerticalOptions="Center" />
+                       Text="{x:Static res:Languages.AppLanguage}"
+                       VerticalOptions="Center" />
                 <Picker Grid.Row="0" Grid.Column="1"
                         ItemDisplayBinding="{Binding NativeName}"
                         ItemsSource="{Binding SupportedCultures}"
                         SelectedItem="{Binding SelectedCulture}" />
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                        Margin="0,5,0,0"
-                       FontSize="12" Opacity="0.8" Text="Select your default app language" />
+                       FontSize="12" Opacity="0.8"
+                       Text="{x:Static res:Languages.SelectAppLanguage}" />
             </Grid>
         </Border>
 
         <!--  Display  -->
         <Label Margin="5,10"
                FontSize="12"
-               Text="{StaticResource res:Languages.Display}" />
+               Text="{x:Static res:Languages.Display}" />
         <Border Padding="10">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
@@ -41,13 +44,15 @@
 
             <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" Grid.Column="0"
-                       Text="Appearance" VerticalOptions="Center" />
+                       Text="{x:Static res:Languages.Appearance}"
+                       VerticalOptions="Center" />
                 <Picker Grid.Row="0" Grid.Column="1"
                         ItemsSource="{Binding AvailableThemes}"
                         SelectedItem="{Binding CurrentTheme}" />
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                        Margin="0,5,0,0"
-                       FontSize="12" Opacity="0.8" Text="Select the app color scheme" />
+                       FontSize="12" Opacity="0.8"
+                       Text="{x:Static res:Languages.SelectAppColor}" />
             </Grid>
         </Border>
 
