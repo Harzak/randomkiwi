@@ -2,6 +2,7 @@
 <ContentPage x:Class="randomkiwi.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:res="clr-namespace:randomkiwi.Resources"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
              Title="SettingsView"
@@ -31,7 +32,8 @@
 
         <!--  Display  -->
         <Label Margin="5,10"
-               FontSize="12" Text="Display" />
+               FontSize="12"
+               Text="{StaticResource res:Languages.Display}" />
         <Border Padding="10">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
