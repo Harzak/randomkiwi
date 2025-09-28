@@ -27,6 +27,8 @@ public static class MauiProgram
 #endif
 
         builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddSingleton<SettingsViewModel>();
+        builder.Services.AddSingleton<BookmarksViewModel>();
 
         return builder.Build();
     }

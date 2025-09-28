@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="randomkiwi.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
+             Title="SettingsView"
+             x:DataType="viewModels:SettingsViewModel">
+    <VerticalStackLayout Margin="10,0">
+
+        <!--  App language  -->
+        <Label Margin="5,10"
+               FontSize="12" Text="Languages" />
+        <Border Padding="10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+
+            <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
+                <Label Grid.Row="0" Grid.Column="0"
+                       Text="App Language" VerticalOptions="Center" />
+                <Picker Grid.Row="0" Grid.Column="1"
+                        ItemDisplayBinding="{Binding NativeName}"
+                        ItemsSource="{Binding SupportedCultures}"
+                        SelectedItem="{Binding SelectedCulture}" />
+                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                       Margin="0,5,0,0"
+                       FontSize="12" Opacity="0.8" Text="Select your default app language" />
+            </Grid>
+        </Border>
+
+        <!--  Display  -->
+        <Label Margin="5,10"
+               FontSize="12" Text="Display" />
+        <Border Padding="10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+
+            <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
+                <Label Grid.Row="0" Grid.Column="0"
+                       Text="Appearance" VerticalOptions="Center" />
+                <Picker Grid.Row="0" Grid.Column="1"
+                        ItemsSource="{Binding AvailableThemes}"
+                        SelectedItem="{Binding CurrentTheme}" />
+                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                       Margin="0,5,0,0"
+                       FontSize="12" Opacity="0.8" Text="Select the app color scheme" />
+            </Grid>
+        </Border>
+
+
+    </VerticalStackLayout>
+</ContentPage>

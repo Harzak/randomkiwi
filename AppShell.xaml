@@ -3,7 +3,8 @@
        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:views="clr-namespace:randomkiwi.Views"
-       Title="title here">
+       Title="title here"
+       FlyoutBehavior="Flyout">
 
     <Shell.TitleView>
         <Grid ColumnDefinitions="*,Auto">
@@ -20,8 +21,28 @@
         </Grid>
     </Shell.TitleView>
 
-    <ShellContent Title="Home"
-                  ContentTemplate="{DataTemplate views:MainView}"
-                  Route="MainPage" />
+    <FlyoutItem Title="Main">
+        <Tab>
 
+            <ShellContent Title="Main"
+                          ContentTemplate="{DataTemplate views:MainView}"
+                          Route="MainPage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="Bookmarks">
+        <Tab>
+
+            <ShellContent Title="Bookmarks"
+                          ContentTemplate="{DataTemplate views:BookmarksView}"
+                          Route="BookmarksPage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="Settings">
+        <Tab>
+
+            <ShellContent Title="Settings"
+                          ContentTemplate="{DataTemplate views:SettingsView}"
+                          Route="SettingsPage" />
+        </Tab>
+    </FlyoutItem>
 </Shell>

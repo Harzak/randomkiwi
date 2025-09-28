@@ -58,4 +58,25 @@
                      Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                              Dark={StaticResource LightOnDarkBackground}}" />
 
+    <FontImageSource x:Key="IconDelete"
+                     FontFamily="{x:Static f:FluentUI.FontFamily}"
+                     Glyph="{x:Static f:FluentUI.delete_32_regular}"
+                     Size="{StaticResource size240}"
+                     Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                             Dark={StaticResource LightOnDarkBackground}}" />
+
+    <FontImageSource x:Key="IconView"
+                     FontFamily="{x:Static f:FluentUI.FontFamily}"
+                     Glyph="{x:Static f:FluentUI.eye_32_regular}"
+                     Size="{StaticResource size240}"
+                     Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                             Dark={StaticResource LightOnDarkBackground}}" />
+
+    <FontImageSource x:Key="IconClose"
+                     FontFamily="{x:Static f:FluentUI.FontFamily}"
+                     Glyph="{x:Static f:FluentUI.dismiss_16_regular}"
+                     Size="{StaticResource size160}"
+                     Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                             Dark={StaticResource LightOnDarkBackground}}" />
+
 </ResourceDictionary>
