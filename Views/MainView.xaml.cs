@@ -11,8 +11,13 @@ public partial class MainView : ContentPage
         _mainViewModel = viewModel; //meh
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
-        _mainViewModel?.Initialize(); //meh, todo: app lifecyle
+        base.OnAppearing();
+
+        if (BindingContext is MainViewModel viewModel)
+        {
+            await viewModel.InitializeAsync().ConfigureAwait(false);
+        }
     }
 }

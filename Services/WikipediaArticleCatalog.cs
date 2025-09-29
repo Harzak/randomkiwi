@@ -1,4 +1,5 @@
-﻿using randomkiwi.Dto;
+﻿using Microsoft.Extensions.Logging;
+using randomkiwi.Dto;
 using randomkiwi.Interfaces;
 using randomkiwi.Models;
 using randomkiwi.Services.Http;
@@ -19,6 +20,7 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     private const int POOL_THRESHOLD = 20;
     private const int CATALOG_THRESHOLD = 40;
 
+    private readonly ILogger _logger;
     private readonly IWikipediaAPIClient _apiClient;
     private readonly IWikipediaUrlBuilder _urlBuilder;
     private readonly IUserMetricsService _userMetricsService;
@@ -33,11 +35,13 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     public WikipediaArticleCatalog(
         IWikipediaAPIClient apiClient,
         IWikipediaUrlBuilder urlBuilder,
-        IUserMetricsService userMetricsService)
+        IUserMetricsService userMetricsService,
+        ILogger<WikipediaArticleCatalog> logger)
     {
         _apiClient = apiClient;
         _urlBuilder = urlBuilder;
         _userMetricsService = userMetricsService;
+        _logger = logger;
         _lock = new Lock();
         _pool = [];
         _catalog = [];
@@ -49,52 +53,28 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         OperationResult feedResult = await this.FeedPoolAsync().ConfigureAwait(false);
         if (feedResult.IsSuccess)
         {
-            WikipediaArticleMetadata? article = this.DequeueFromPool();
-            if (article is null)
+            OperationResult nextResult = this.NextInternal();
+            if (nextResult.IsFailed)
             {
-                return OperationResult.Failure("No articles available in the pool.");
+                return nextResult;
             }
-
-            this.AddToCatalog(article);
-            _userMetricsService.TrackNavigation(ENavigationType.Initialize, null, article.Id);
-
             return OperationResult.Success();
         }
         return OperationResult.Failure("Failed to initialize article catalog.");
     }
 
     /// <inheritdoc />
-    public OperationResult Previous()
-    {
-        if (_currentIndex > 0)
-        {
-            WikipediaArticleMetadata? fromArticle = Current;
-            _currentIndex--;
-            WikipediaArticleMetadata? toArticle = Current;
-
-            _userMetricsService.TrackNavigation(ENavigationType.Previous, fromArticle?.Id, toArticle?.Id);
-
-            return OperationResult.Success();
-        }
-        return OperationResult.Failure("No previous article in the catalog.");
-    }
-
-    /// <inheritdoc />
     public async Task<OperationResult> NextAsync()
     {
-        OperationResult result = new();
-        var fromArticle = Current;
-
-        WikipediaArticleMetadata? article = this.DequeueFromPool();
-        if (article is null)
+        OperationResult result = this.NextInternal();
+        if (result.IsFailed)
         {
-            return result.WithError("No more articles in the pool.");
+            return result;
         }
 
-        this.AddToCatalog(article);
-
-        _userMetricsService.TrackNavigation(ENavigationType.Next, fromArticle?.Id, article.Id);
         int optimalPoolSize = _userMetricsService.GetOptimalPoolSize();
+        WikipediaArticleCatalogLogs.OptimalPoolSize(_logger, optimalPoolSize);
+
         OperationResult feedResult = await this.FeedPoolAsync(optimalPoolSize).ConfigureAwait(false);
 
         if (!feedResult.IsSuccess)
@@ -106,9 +86,37 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     }
 
     /// <inheritdoc />
+    public OperationResult Previous()
+    {
+        if (_currentIndex > 0 && _catalog.Count >= _currentIndex -1)
+        {
+            _currentIndex--;
+
+            _userMetricsService.TrackNavigation(ENavigationType.Previous, Current!.Id);
+            return OperationResult.Success();
+        }
+        return OperationResult.Failure("No previous article in the catalog.");
+    }
+
+    /// <inheritdoc />
     public Task<OperationResult> BookmarkAsync()
     {
         throw new NotImplementedException();
+    }
+
+    private OperationResult NextInternal()
+    {
+        WikipediaArticleMetadata? article = this.DequeueFromPool();
+        if (article is null)
+        {
+            WikipediaArticleCatalogLogs.EmptyPool(_logger);
+            return OperationResult.Failure("No more articles in the pool.");
+        }
+
+        this.AddToCatalog(article);
+
+        _userMetricsService.TrackNavigation(ENavigationType.Next, article.Id);
+        return OperationResult.Success();
     }
 
     private void AddToCatalog(WikipediaArticleMetadata article)
@@ -163,8 +171,12 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
                     });
                 }
             }
+
+            WikipediaArticleCatalogLogs.PoolReplenished(_logger, _pool.Count);
             return result.WithSuccess();
         }
+
+        WikipediaArticleCatalogLogs.FailedReplenishPool(_logger, apiResult.ErrorMessage);
         return apiResult;
     }
 

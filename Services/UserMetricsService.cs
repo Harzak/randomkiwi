@@ -1,4 +1,5 @@
-﻿using randomkiwi.Models;
+﻿using Microsoft.Extensions.Logging;
+using randomkiwi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +22,11 @@ internal sealed class UserMetricsService : IUserMetricsService
         _sessionMetrics = new UserSessionMetrics();
     }
 
-    public void TrackNavigation(ENavigationType type, int? fromArticleId, int? toArticleId)
+    public void TrackNavigation(ENavigationType type, int toArticleId)
     {
         _sessionMetrics.LastActivity = DateTime.UtcNow;
         _sessionMetrics.TotalNavigations++;
 
-        // Track consecutive navigations
         switch (type)
         {
             case ENavigationType.Next:
@@ -41,46 +41,48 @@ internal sealed class UserMetricsService : IUserMetricsService
                 break;
         }
 
-        // Record the navigation event
-        var navigationEvent = new NavigationEvent
+        NavigationEvent navigationEvent = new()
         {
             Type = type,
-            FromArticleId = fromArticleId,
             ToArticleId = toArticleId
         };
 
         _sessionMetrics.RecentNavigations.Enqueue(navigationEvent);
 
-        // Keep only recent navigations
         while (_sessionMetrics.RecentNavigations.Count > MAX_RECENT_NAVIGATIONS)
         {
             _sessionMetrics.RecentNavigations.Dequeue();
         }
     }
 
-
     public EUserNavigationPattern AnalyzeNavigationPattern()
     {
-        var totalNavigations = _sessionMetrics.TotalNavigations;
+        int totalNavigations = _sessionMetrics.TotalNavigations;
         if (totalNavigations == 0)
+        {
             return EUserNavigationPattern.Unknown;
+        }
 
-        var forwardRatio = (double)_sessionMetrics.ForwardNavigations / totalNavigations;
-        var consecutiveForward = _sessionMetrics.ConsecutiveForwardNavigations;
+        double forwardRatio = (double)_sessionMetrics.ForwardNavigations / totalNavigations;
+        int consecutiveForward = _sessionMetrics.ConsecutiveForwardNavigations;
 
         if (forwardRatio > 0.8 && consecutiveForward > 3)
+        {
             return EUserNavigationPattern.Reader;
+        }
 
         if (_sessionMetrics.ConsecutiveBackwardNavigations > 2)
+        {
             return EUserNavigationPattern.Reviewer;
+        }
 
         return EUserNavigationPattern.Explorer;
     }
 
     public int GetOptimalPoolSize()
     {
-        var pattern = AnalyzeNavigationPattern();
-        var baseSize = 20;
+        const int baseSize = 20;
+        EUserNavigationPattern pattern = AnalyzeNavigationPattern();
 
         return pattern switch
         {

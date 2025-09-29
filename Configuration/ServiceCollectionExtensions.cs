@@ -41,11 +41,14 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
         collection.AddSingleton<IUserMetricsService, UserMetricsService>();
+        collection.AddSingleton<Func<int, IDebounceAction>>(serviceProvider =>
+        {
+            return delayMs => new DebounceAction(delayMs);
+        });
     }
 
     private static void AddHttpClient(this IServiceCollection services)
     {
-        // Main API client with platform-specific optimizations
         services.AddHttpClient(HttpClientConsts.HTTPCLIENT_NAME_DEFAULT)
             .ConfigurePrimaryHttpMessageHandler(CreatePlatformOptimizedHandler);
     }

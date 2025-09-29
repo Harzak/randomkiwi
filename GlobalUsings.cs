@@ -1,5 +1,5 @@
 ﻿global using randomkiwi.ViewModels;
-global using randomkiwi.Views;
+global using randomkiwi.Utilities;
 global using randomkiwi.Configuration;
 global using randomkiwi.Constants;
 global using randomkiwi.Dto;
