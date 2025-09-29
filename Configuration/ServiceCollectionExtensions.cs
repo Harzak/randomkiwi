@@ -39,8 +39,8 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IWikipediaUrlBuilder, WikipediaUrlBuilder>();
 
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
-
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
+        collection.AddSingleton<IUserMetricsService, UserMetricsService>();
     }
 
     private static void AddHttpClient(this IServiceCollection services)

@@ -16,23 +16,28 @@ namespace randomkiwi.Services;
 /// </summary>
 internal sealed class WikipediaArticleCatalog : IArticleCatalog
 {
-    private const int POOL_TRESHOLD = 30;
-    private const int CATALOG_TRESHOLD = 100;
+    private const int POOL_THRESHOLD = 20;
+    private const int CATALOG_THRESHOLD = 40;
 
     private readonly IWikipediaAPIClient _apiClient;
     private readonly IWikipediaUrlBuilder _urlBuilder;
+    private readonly IUserMetricsService _userMetricsService;
 
     private readonly Queue<WikipediaArticleMetadata> _pool;
     private readonly List<WikipediaArticleMetadata> _catalog;
     private int _currentIndex;
-    private Lock _lock;
+    private readonly Lock _lock;
 
     public WikipediaArticleMetadata? Current => _catalog.Count > _currentIndex ? _catalog[_currentIndex] : null;
 
-    public WikipediaArticleCatalog(IWikipediaAPIClient apiClient, IWikipediaUrlBuilder urlBuilder)
+    public WikipediaArticleCatalog(
+        IWikipediaAPIClient apiClient,
+        IWikipediaUrlBuilder urlBuilder,
+        IUserMetricsService userMetricsService)
     {
         _apiClient = apiClient;
         _urlBuilder = urlBuilder;
+        _userMetricsService = userMetricsService;
         _lock = new Lock();
         _pool = [];
         _catalog = [];
@@ -51,6 +56,8 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
             }
 
             this.AddToCatalog(article);
+            _userMetricsService.TrackNavigation(ENavigationType.Initialize, null, article.Id);
+
             return OperationResult.Success();
         }
         return OperationResult.Failure("Failed to initialize article catalog.");
@@ -61,7 +68,12 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     {
         if (_currentIndex > 0)
         {
+            WikipediaArticleMetadata? fromArticle = Current;
             _currentIndex--;
+            WikipediaArticleMetadata? toArticle = Current;
+
+            _userMetricsService.TrackNavigation(ENavigationType.Previous, fromArticle?.Id, toArticle?.Id);
+
             return OperationResult.Success();
         }
         return OperationResult.Failure("No previous article in the catalog.");
@@ -71,6 +83,7 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     public async Task<OperationResult> NextAsync()
     {
         OperationResult result = new();
+        var fromArticle = Current;
 
         WikipediaArticleMetadata? article = this.DequeueFromPool();
         if (article is null)
@@ -79,13 +92,15 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         }
 
         this.AddToCatalog(article);
-        OperationResult feedResult = await this.FeedPoolAsync().ConfigureAwait(false);
+
+        _userMetricsService.TrackNavigation(ENavigationType.Next, fromArticle?.Id, article.Id);
+        int optimalPoolSize = _userMetricsService.GetOptimalPoolSize();
+        OperationResult feedResult = await this.FeedPoolAsync(optimalPoolSize).ConfigureAwait(false);
+
         if (!feedResult.IsSuccess)
         {
             return result.WithError("Failed to replenish the article pool.");
         }
-
-        this.CleanupCatalog();
 
         return result.WithSuccess();
     }
@@ -100,6 +115,10 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     {
         lock (_lock)
         {
+            if (_catalog.Count > CATALOG_THRESHOLD)
+            {
+                _catalog.RemoveAt(0);
+            }
             _catalog.Add(article);
             _currentIndex = _catalog.Count - 1;
         }
@@ -117,16 +136,16 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         return null;
     }
 
-    private async Task<OperationResult> FeedPoolAsync()
+    private async Task<OperationResult> FeedPoolAsync(int targetPoolSize = POOL_THRESHOLD)
     {
         OperationResult result = new();
 
-        if (_pool.Count > 0)
+        if (_pool.Count >= targetPoolSize / 2)
         {
             return result.WithSuccess();
         }
 
-        OperationResultList<PageDto> apiResult = await _apiClient.GetRandomPagesAsync(POOL_TRESHOLD).ConfigureAwait(false);
+        OperationResultList<PageDto> apiResult = await _apiClient.GetRandomPagesAsync(targetPoolSize).ConfigureAwait(false);
 
         if (apiResult.IsSuccess && apiResult.HasContent)
         {
@@ -149,22 +168,23 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         return apiResult;
     }
 
-    private void CleanupCatalog()
+    private bool _disposed;
+    private void Dispose(bool disposing)
     {
-        lock (_lock)
+        if (!_disposed)
         {
-            if (_catalog.Count > CATALOG_TRESHOLD)
+            if (disposing)
             {
-                int itemsToRemove = _catalog.Count - POOL_TRESHOLD;
-                _catalog.RemoveRange(0, itemsToRemove);
-                _currentIndex = Math.Max(0, _currentIndex - itemsToRemove);
+                _pool?.Clear();
+                _catalog?.Clear();
             }
+            _disposed = true;
         }
     }
 
     public void Dispose()
     {
-        _pool?.Clear();
-        _catalog?.Clear();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
