@@ -10,10 +10,9 @@
     <Shell.TitleView>
         <Grid ColumnDefinitions="*,Auto">
 
-            <ImageButton Grid.Column="0"
-                         Aspect="Center" HeightRequest="44" HorizontalOptions="Center"
-                         Source="{StaticResource IconRandomKiwi}"
-                         VerticalOptions="Center" WidthRequest="44" />
+            <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                   Aspect="AspectFit" HeightRequest="30" HorizontalOptions="Center" Source="logo.png"
+                   VerticalOptions="Center" />
 
             <ImageButton Grid.Column="1"
                          Aspect="Center" HeightRequest="44" HorizontalOptions="End"

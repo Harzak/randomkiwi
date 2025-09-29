@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using randomkiwi.Configuration;
+using randomkiwi.Factories;
 using Syncfusion.Maui.Toolkit.Hosting;
+using System.Net;
 
 namespace randomkiwi;
 
@@ -26,10 +29,10 @@ public static class MauiProgram
         builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-        builder.Services.AddSingleton<MainViewModel>();
-        builder.Services.AddSingleton<SettingsViewModel>();
-        builder.Services.AddSingleton<BookmarksViewModel>();
+        builder.Services.AddCoreServices();
 
         return builder.Build();
     }
+
+
 }

@@ -1,23 +1,39 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using randomkiwi.Interfaces;
+using randomkiwi.Models;
 
 namespace randomkiwi.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    [ObservableProperty]
-    private string _title = "Hello, World!";
+    private readonly IArticleCatalog _articleCatalog;
+
+    public WikipediaArticleMetadata? Article => _articleCatalog.Current;
+
+    public MainViewModel(IArticleCatalog articleCatalog)
+    {
+        _articleCatalog = articleCatalog;
+    }
+
+    public void Initialize()
+    {
+        _articleCatalog.InitializeAsync().Wait();
+        base.OnPropertyChanged(nameof(Article));
+    }
 
     [RelayCommand]
-    private async Task PreviousArticle()
+    private void PreviousArticle()
     {
-        await Task.CompletedTask.ConfigureAwait(false);
+        _articleCatalog.Previous();
+        base.OnPropertyChanged(nameof(Article));
     }
 
     [RelayCommand]
     private async Task NextArticle()
     {
-        await Task.CompletedTask.ConfigureAwait(false);
+        await _articleCatalog.NextAsync().ConfigureAwait(false);
+        base.OnPropertyChanged(nameof(Article));
     }
 
 
