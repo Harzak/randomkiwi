@@ -10,29 +10,17 @@ namespace randomkiwi.ViewModels;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {
-    [ObservableProperty]
-    private IReadOnlyCollection<CultureInfo> _supportedCultures;
+    public IAppConfiguration AppConfig { get; }
 
-    [ObservableProperty]
-    private CultureInfo _selectedCulture;
-
-    [ObservableProperty]
-    private string _selectedCultureStr;
-
-    [ObservableProperty]
-    private IReadOnlyCollection<string> _availableThemes;
-
-    [ObservableProperty]
-    private string _currentTheme;
-
-    public SettingsViewModel()
+    public SettingsViewModel(IAppConfiguration appConfig)
     {
-        _supportedCultures = [new("en-US"), new("fr-FR")];
-        _selectedCulture = _supportedCultures.First();
-        _selectedCultureStr = _selectedCulture.NativeName;
+        this.AppConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
+    }
 
-        _availableThemes = new List<string> { "Light", "Dark", "Default (system)" };
-        _currentTheme = _availableThemes.First();
+    internal void OnSelectedCultureChanged()
+    {
+
+
     }
 }
 

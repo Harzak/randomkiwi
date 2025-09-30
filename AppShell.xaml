@@ -11,11 +11,11 @@
         <Grid ColumnDefinitions="*,Auto">
 
             <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                   Aspect="AspectFit" HeightRequest="30" HorizontalOptions="Center" Source="logo.png"
-                   VerticalOptions="Center" />
+                   Aspect="AspectFit" Background="Transparent" HeightRequest="30"
+                   HorizontalOptions="Center" Source="logo.png" VerticalOptions="Center" />
 
-            <ImageButton Grid.Column="1"
-                         Aspect="Center" HeightRequest="44" HorizontalOptions="End"
+            <ImageButton Grid.Column="1" Aspect="Center" HeightRequest="44"
+                         HorizontalOptions="End"
                          Source="{StaticResource IconMore}"
                          VerticalOptions="Center" WidthRequest="44" />
         </Grid>
@@ -23,26 +23,17 @@
 
     <FlyoutItem Title="Main">
         <Tab>
-
-            <ShellContent Title="{x:Static res:Languages.Home}"
-                          ContentTemplate="{DataTemplate views:MainView}"
-                          Route="MainPage" />
+            <ShellContent Title="{x:Static res:Languages.Home}" ContentTemplate="{DataTemplate views:MainView}" Route="MainPage" />
         </Tab>
     </FlyoutItem>
     <FlyoutItem Title="Bookmarks">
         <Tab>
-
-            <ShellContent Title="{x:Static res:Languages.Bookmarks}"
-                          ContentTemplate="{DataTemplate views:BookmarksView}"
-                          Route="BookmarksPage" />
+            <ShellContent Title="{x:Static res:Languages.Bookmarks}" ContentTemplate="{DataTemplate views:BookmarksView}" Route="BookmarksPage" />
         </Tab>
     </FlyoutItem>
     <FlyoutItem Title="Settings">
         <Tab>
-
-            <ShellContent Title="{x:Static res:Languages.Settings}"
-                          ContentTemplate="{DataTemplate views:SettingsView}"
-                          Route="SettingsPage" />
+            <ShellContent Title="{x:Static res:Languages.Settings}" ContentTemplate="{DataTemplate views:SettingsView}" Route="SettingsPage" />
         </Tab>
     </FlyoutItem>
 </Shell>
