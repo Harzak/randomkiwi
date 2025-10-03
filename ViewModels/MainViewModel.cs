@@ -80,11 +80,11 @@ public sealed partial class MainViewModel : ObservableObject
 
     private void HandleResult(OperationResult result)
     {
-        if (result.IsSuccess)
+        if (result.IsSuccess && _articleCatalog.Current?.Url != null)
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                this.WebViewViewModel.CurrentUrl = _articleCatalog.Current?.Url;
+                this.WebViewViewModel.NavigateToUrl(_articleCatalog.Current.Url);
             });
         }
         else

@@ -44,10 +44,11 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IWikipediaAPIClient, WikipediaAPIClient>();
         collection.AddSingleton<IWikipediaUrlBuilder, WikipediaUrlBuilder>();
         collection.AddSingleton<IUserMetricsService, UserMetricsService>();
+        collection.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
+        collection.AddTransient<IWebViewManager, WebViewManager>();
 
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
-        collection.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
         collection.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
         collection.AddSingleton<Func<int, IDebounceAction>>(serviceProvider =>
         {

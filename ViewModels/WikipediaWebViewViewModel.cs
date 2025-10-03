@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using randomkiwi.Configuration;
+using randomkiwi.Interfaces;
 using randomkiwi.Models;
 using System;
 using System.Net;
@@ -15,24 +15,57 @@ namespace randomkiwi.ViewModels;
 public sealed partial class WikipediaWebViewViewModel : ObservableObject
 {
     private readonly ILogger<WikipediaWebViewViewModel> _logger;
-    private readonly IWebViewConfigurator _webViewConfigurator;
     private readonly IMessenger _messenger;
+    private readonly IWebViewManager _webViewManager;
 
     [ObservableProperty]
     private Uri? _currentUrl;
 
-    [ObservableProperty]
-    private CookieContainer? _cookiesContainer;
+    /// <summary>
+    /// Gets the WebView manager for programmatic control of the WebView.
+    /// </summary>
+    public IWebViewManager WebViewManager => _webViewManager;
 
     public WikipediaWebViewViewModel(
-        IWebViewConfigurator webViewConfigurator,
+        IWebViewManager webViewManager,
         IMessenger messenger,
         ILogger<WikipediaWebViewViewModel> logger)
     {
-        _webViewConfigurator = webViewConfigurator ?? throw new ArgumentNullException(nameof(webViewConfigurator));
+        _webViewManager = webViewManager ?? throw new ArgumentNullException(nameof(webViewManager));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        
+        _webViewManager.Navigating += OnNavigating;
+        _webViewManager.Navigated += OnNavigated;
+        _webViewManager.NavigationStateChanged += OnNavigationStateChanged;
     }
+
+    public void NavigateToUrl(Uri uri)
+    {
+        CurrentUrl = uri;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanGoBack))]
+    public void GoBack()
+    {
+        _webViewManager.GoBack();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanGoForward))]
+    public void GoForward()
+    {
+        _webViewManager.GoForward();
+    }
+
+    [RelayCommand]
+    public void Reload()
+    {
+        _webViewManager.Reload();
+    }
+
+    public bool CanGoBack => _webViewManager.CanGoBack;
+
+    public bool CanGoForward => _webViewManager.CanGoForward;
 
     partial void OnCurrentUrlChanging(Uri? oldValue, Uri? newValue)
     {
@@ -46,42 +79,24 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
         _messenger.Send(new UrlChangingMessage(CurrentUrl, newValue));
     }
 
-    internal void Navigating(WebNavigatingEventArgs args)
+    partial void OnCurrentUrlChanged(Uri? value)
     {
-        WikipediaWebViewLogs.NavigationStarted(_logger, args.Url?.ToString());
-
-        if (Uri.TryCreate(args.Url, UriKind.Absolute, out Uri? uri))
-        {
-            CookieContainer? cookies = _webViewConfigurator.CreateCookieContainer(new Uri(args.Url));
-            if (cookies != null)
-            {
-                this.CookiesContainer = cookies;
-                WikipediaWebViewLogs.CookieCreated(_logger, uri);
-            }
-            else
-            {
-                WikipediaWebViewLogs.CookieCreationFailed(_logger, uri);
-            }
-            _messenger.Send(new NavigationStartedMessage(uri));
-        }
+        _webViewManager.Source = value;
     }
 
-    internal void Navigated(WebNavigatedEventArgs args)
+    private void OnNavigating(object? sender, WebNavigatingEventArgs e)
     {
-        bool isSuccess = args.Result == WebNavigationResult.Success;
+        OnPropertyChanged();
+    }
 
-        if (Uri.TryCreate(args.Url, UriKind.Absolute, out Uri? uri))
-        {
-            WikipediaWebViewLogs.NavigationCompleted(_logger, args.Url, isSuccess);
+    private void OnNavigated(object? sender, WebNavigatedEventArgs e)
+    {
+        OnPropertyChanged();
+    }
 
-            _messenger.Send(new NavigationCompletedMessage(uri, isSuccess));
-
-            if (isSuccess)
-            {
-                WikipediaWebViewLogs.LinkClicked(_logger, args.Url);
-
-                _messenger.Send(new LinkClickedMessage(uri));
-            }
-        }
+    private void OnNavigationStateChanged(object? sender, EventArgs e)
+    {
+        GoBackCommand.NotifyCanExecuteChanged();
+        GoForwardCommand.NotifyCanExecuteChanged();
     }
 }
