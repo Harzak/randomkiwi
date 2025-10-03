@@ -76,7 +76,7 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
         }
 
         WikipediaWebViewLogs.UrlChanging(_logger, CurrentUrl?.ToString(), newValue?.ToString());
-        _messenger.Send(new UrlChangingMessage(CurrentUrl, newValue));
+        _messenger.Send(new UrlChangingMessage(CurrentUrl?.ToString() ?? "" , newValue?.ToString() ?? ""));
     }
 
     partial void OnCurrentUrlChanged(Uri? value)

@@ -9,4 +9,4 @@ namespace randomkiwi.Models;
 /// <summary>
 /// Message sent when a URL is about to change.
 /// </summary>
-public sealed record UrlChangingMessage(Uri? OldUrl, Uri? NewUrl);
+public sealed record UrlChangingMessage(string OldUrl, string NewUrl);

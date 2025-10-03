@@ -43,9 +43,10 @@ public class WebViewManager : IWebViewManager
         get => _webView?.Source is UrlWebViewSource urlSource ? new Uri(urlSource.Url) : null;
         set
         {
-            if (_webView != null)
+            if (_webView != null && value != null)
             {
-                _webView.Source = value?.ToString();
+                SetCookies(value);
+                _webView.Source = value.ToString();
             }
         }
     }
@@ -130,21 +131,7 @@ public class WebViewManager : IWebViewManager
     {
         WikipediaWebViewLogs.NavigationStarted(_logger, args.Url?.ToString());
 
-        if (Uri.TryCreate(args.Url, UriKind.Absolute, out Uri? uri))
-        {
-            CookieContainer? cookies = _webViewConfigurator.CreateCookieContainer(uri);
-            if (cookies != null && _webView != null)
-            {
-                _webView.Cookies = cookies;
-                WikipediaWebViewLogs.CookieCreated(_logger, uri);
-            }
-            else
-            {
-                WikipediaWebViewLogs.CookieCreationFailed(_logger, uri);
-            }
-
-            _messenger.Send(new NavigationStartedMessage(uri));
-        }
+            _messenger.Send(new NavigationStartedMessage(args.Url?.ToString() ?? ""));
     }
 
     private void HandleNavigated(WebNavigatedEventArgs args)
@@ -155,7 +142,7 @@ public class WebViewManager : IWebViewManager
         {
             WikipediaWebViewLogs.NavigationCompleted(_logger, args.Url, isSuccess);
 
-            _messenger.Send(new NavigationCompletedMessage(uri, isSuccess));
+            _messenger.Send(new NavigationCompletedMessage(uri.ToString(), isSuccess));
 
             if (isSuccess)
             {
@@ -163,6 +150,20 @@ public class WebViewManager : IWebViewManager
 
                 _messenger.Send(new LinkClickedMessage(uri));
             }
+        }
+    }
+
+    private void SetCookies(Uri targetUri)
+    {
+        CookieContainer? cookies = _webViewConfigurator.CreateCookieContainer(targetUri);
+        if (cookies != null && _webView != null)
+        {
+            _webView.Cookies = cookies;
+            WikipediaWebViewLogs.CookieCreated(_logger, targetUri);
+        }
+        else
+        {
+            WikipediaWebViewLogs.CookieCreationFailed(_logger, targetUri);
         }
     }
 }
