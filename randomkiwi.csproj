@@ -79,10 +79,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Folder Include="Views\Controls\" />
-	</ItemGroup>
-	
-	<ItemGroup>
 	  <Compile Update="Resources\Languages.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -101,6 +97,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <MauiXaml Update="Views\Controls\WikipediaWebView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\AppStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -4,6 +4,9 @@ using randomkiwi.Factories;
 using randomkiwi.Interfaces;
 using randomkiwi.Services;
 using randomkiwi.Services.Http;
+using randomkiwi.Views;
+using randomkiwi.ViewModels;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,17 +33,22 @@ public static class ServiceCollectionExtensions
     {
         collection.AddHttpClient();
 
+        // ViewModels
         collection.AddSingleton<MainViewModel>();
         collection.AddSingleton<SettingsViewModel>();
         collection.AddSingleton<BookmarksViewModel>();
+        collection.AddTransient<WikipediaWebViewViewModel>();
 
+        // Services
         collection.AddSingleton<IArticleCatalog, WikipediaArticleCatalog>();
         collection.AddSingleton<IWikipediaAPIClient, WikipediaAPIClient>();
         collection.AddSingleton<IWikipediaUrlBuilder, WikipediaUrlBuilder>();
+        collection.AddSingleton<IUserMetricsService, UserMetricsService>();
 
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
-        collection.AddSingleton<IUserMetricsService, UserMetricsService>();
+        collection.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
+        collection.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
         collection.AddSingleton<Func<int, IDebounceAction>>(serviceProvider =>
         {
             return delayMs => new DebounceAction(delayMs);

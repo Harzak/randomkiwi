@@ -12,9 +12,11 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly IArticleCatalog _articleCatalog;
     private readonly IDebounceAction _debounceAction;
 
-    public WikipediaArticleMetadata? Article => _articleCatalog.Current;
     public bool IsLoaded => !this.IsLoading && !this.IsInError;
     public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
+
+    [ObservableProperty]
+    private WikipediaWebViewViewModel _webViewViewModel;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLoaded))]
@@ -26,8 +28,12 @@ public sealed partial class MainViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsInError))]
     private string? _errorMessage;
 
-    public MainViewModel(IArticleCatalog articleCatalog, Func<int, IDebounceAction> createDebounceAction)
+    public MainViewModel(
+        WikipediaWebViewViewModel webViewViewModel,
+        IArticleCatalog articleCatalog, 
+        Func<int, IDebounceAction> createDebounceAction)
     {
+        _webViewViewModel = webViewViewModel;
         _articleCatalog = articleCatalog;
         _debounceAction = createDebounceAction?.Invoke(500) ?? throw new ArgumentNullException(nameof(createDebounceAction));
     }
@@ -78,7 +84,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                OnPropertyChanged(nameof(Article));
+                this.WebViewViewModel.CurrentUrl = _articleCatalog.Current?.Url;
             });
         }
         else
