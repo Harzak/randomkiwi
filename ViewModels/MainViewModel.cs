@@ -40,25 +40,29 @@ public sealed partial class MainViewModel : ObservableObject
 
     public async Task InitializeAsync()
     {
-        await ExecuteWithLoadingAsync(() => _debounceAction.ExecuteAsync(_articleCatalog.InitializeAsync)).ConfigureAwait(false);
+        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(_articleCatalog.InitializeAsync);
+        await ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
     }
 
     [RelayCommand]
     private async Task PreviousArticle()
     {
-        await ExecuteWithLoadingAsync(() => _debounceAction.ExecuteAsync(() => Task.FromResult(_articleCatalog.Previous()))).ConfigureAwait(false);
+        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(() => Task.FromResult(_articleCatalog.Previous()));
+        await ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
     }
 
     [RelayCommand]
     private async Task NextArticle()
     {
-        await ExecuteWithLoadingAsync(() => _debounceAction.ExecuteAsync(_articleCatalog.NextAsync)).ConfigureAwait(false);
+        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(_articleCatalog.NextAsync);
+        await ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
     }
 
     [RelayCommand]
     private async Task AddBookmark()
     {
-        await ExecuteWithLoadingAsync(() => _debounceAction.ExecuteAsync(_articleCatalog.BookmarkAsync)).ConfigureAwait(false);
+        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(_articleCatalog.BookmarkAsync);
+        await ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
     }
 
     private async Task ExecuteWithLoadingAsync(Func<Task<OperationResult>> operation)

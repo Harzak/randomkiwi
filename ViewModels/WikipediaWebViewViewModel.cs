@@ -18,13 +18,14 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
     private readonly IMessenger _messenger;
     private readonly IWebViewManager _webViewManager;
 
-    [ObservableProperty]
-    private Uri? _currentUrl;
-
     /// <summary>
     /// Gets the WebView manager for programmatic control of the WebView.
     /// </summary>
     public IWebViewManager WebViewManager => _webViewManager;
+
+    public bool CanGoBack => _webViewManager.CanGoBack;
+
+    public bool CanGoForward => _webViewManager.CanGoForward;
 
     public WikipediaWebViewViewModel(
         IWebViewManager webViewManager,
@@ -35,14 +36,21 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         
-        _webViewManager.Navigating += OnNavigating;
-        _webViewManager.Navigated += OnNavigated;
         _webViewManager.NavigationStateChanged += OnNavigationStateChanged;
     }
 
     public void NavigateToUrl(Uri uri)
     {
-        CurrentUrl = uri;
+        if (uri == null)
+        {
+            WikipediaWebViewLogs.UrlChangingToNull(_logger);
+            return;
+        }
+
+        WikipediaWebViewLogs.UrlChanging(_logger, _webViewManager.Source?.ToString(), uri.ToString());
+        _messenger.Send(new UrlChangingMessage(_webViewManager.Source?.ToString() ?? "", uri.ToString()));
+
+        _webViewManager.Source = uri;
     }
 
     [RelayCommand(CanExecute = nameof(CanGoBack))]
@@ -61,37 +69,6 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
     public void Reload()
     {
         _webViewManager.Reload();
-    }
-
-    public bool CanGoBack => _webViewManager.CanGoBack;
-
-    public bool CanGoForward => _webViewManager.CanGoForward;
-
-    partial void OnCurrentUrlChanging(Uri? oldValue, Uri? newValue)
-    {
-        if (newValue == null)
-        {
-            WikipediaWebViewLogs.UrlChangingToNull(_logger);
-            return;
-        }
-
-        WikipediaWebViewLogs.UrlChanging(_logger, CurrentUrl?.ToString(), newValue?.ToString());
-        _messenger.Send(new UrlChangingMessage(CurrentUrl?.ToString() ?? "" , newValue?.ToString() ?? ""));
-    }
-
-    partial void OnCurrentUrlChanged(Uri? value)
-    {
-        _webViewManager.Source = value;
-    }
-
-    private void OnNavigating(object? sender, WebNavigatingEventArgs e)
-    {
-        OnPropertyChanged();
-    }
-
-    private void OnNavigated(object? sender, WebNavigatedEventArgs e)
-    {
-        OnPropertyChanged();
     }
 
     private void OnNavigationStateChanged(object? sender, EventArgs e)
