@@ -105,7 +105,8 @@ internal sealed class AppConfiguration : IAppConfiguration
 
     private AppTheme GetDefaultTheme()
     {
-        return Application.Current?.UserAppTheme ?? AppTheme.Unspecified;
+        return AppTheme.Dark;
+        //return Application.Current?.UserAppTheme ?? AppTheme.Unspecified;
     }
 }
 

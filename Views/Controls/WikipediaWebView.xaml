@@ -2,11 +2,35 @@
 <ContentView x:Class="randomkiwi.Views.Controls.WikipediaWebView"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:progressBar="clr-namespace:Syncfusion.Maui.Toolkit.ProgressBar;assembly=Syncfusion.Maui.Toolkit"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
              x:Name="Root"
              x:DataType="viewModels:WikipediaWebViewViewModel">
 
-    <ContentPresenter x:Name="WebViewContainer" />
+    <Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
+
+        <!--  Page content  -->
+        <ContentPresenter x:Name="WebViewContainer" Grid.Row="0" Grid.Column="0"
+                          IsVisible="{Binding IsLoaded}" />
+
+
+        <!--  Error messages  -->
+        <Label Grid.Row="0" Grid.Column="0" HorizontalOptions="Center"
+               IsVisible="{Binding IsInError}"
+               Text="Some error occured"
+               TextColor="{StaticResource Red}"
+               VerticalOptions="Center" />
+
+        <!--  Loading  -->
+        <progressBar:SfCircularProgressBar Grid.Row="0" Grid.Column="0"
+                                           Background="{AppThemeBinding Light={StaticResource White},
+                                                                        Dark={StaticResource OffBlack}}"
+                                           IsIndeterminate="True"
+                                           IsVisible="{Binding IsLoading}"
+                                           ProgressFill="{StaticResource Kiwi}"
+                                           WidthRequest="100" />
+
+    </Grid>
 
 </ContentView>
