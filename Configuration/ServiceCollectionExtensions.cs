@@ -1,18 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using randomkiwi.Constants;
-using randomkiwi.Factories;
-using randomkiwi.Interfaces;
-using randomkiwi.Services;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using randomkiwi.Services.Http;
-using randomkiwi.Views;
-using randomkiwi.ViewModels;
-using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace randomkiwi.Configuration;
 

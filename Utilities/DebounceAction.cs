@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace randomkiwi.Utilities;
 
@@ -24,13 +22,13 @@ internal sealed class DebounceAction : IDebounceAction
         Stopwatch sw = Stopwatch.StartNew();
         T result = await action().ConfigureAwait(false);
         sw.Stop();
-        
+
         int remainingTime = _minDurationMs - (int)sw.ElapsedMilliseconds;
         if (remainingTime > 0)
         {
             await Task.Delay(remainingTime).ConfigureAwait(false);
         }
-        
+
         return result;
     }
 

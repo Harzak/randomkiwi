@@ -1,9 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using randomkiwi.Configuration;
-using randomkiwi.Factories;
 using Syncfusion.Maui.Toolkit.Hosting;
-using System.Net;
 
 namespace randomkiwi;
 

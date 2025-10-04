@@ -1,11 +1,4 @@
-﻿using randomkiwi.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Utilities.Results;
+﻿namespace randomkiwi.Utilities.Results;
 
 
 /// <summary>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Interfaces;
+﻿namespace randomkiwi.Interfaces;
 
 /// <summary>
 /// Defines the contract for HTTP client configuration options including base address and identification properties.
@@ -19,7 +13,7 @@ public interface IHttpClientOption
     /// <summary>
     /// Gets or sets the name identifier for the HTTP client.
     /// </summary>
-    string Name { get; init;  }
+    string Name { get; init; }
 
     /// <summary>
     /// Gets or sets the user agent string to be sent with HTTP requests.

@@ -1,17 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using randomkiwi.Constants;
-using randomkiwi.Dto;
-using randomkiwi.Factories;
-using randomkiwi.Interfaces;
-using randomkiwi.Utilities;
 using randomkiwi.Utilities.Results;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace randomkiwi.Services.Http;
 

@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Models;
+﻿namespace randomkiwi.Models;
 
 /// <summary>
 /// Represents user navigation and interaction metrics for the Wikipedia article catalog
 /// </summary>
 public sealed record UserSessionMetrics
 {
-    public DateTime LastActivity { get; set; } 
+    public DateTime LastActivity { get; set; }
     public int TotalNavigations { get; set; }
     public int ForwardNavigations { get; set; }
     public int BackwardNavigations { get; set; }

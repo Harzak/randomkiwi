@@ -1,9 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using randomkiwi.Interfaces;
-using randomkiwi.Models;
-using randomkiwi.Utilities;
 using randomkiwi.Utilities.Results;
 
 namespace randomkiwi.ViewModels;

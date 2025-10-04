@@ -1,5 +1,3 @@
-using randomkiwi.ViewModels;
-
 namespace randomkiwi.Views.Controls;
 
 public partial class WikipediaWebView : ContentView

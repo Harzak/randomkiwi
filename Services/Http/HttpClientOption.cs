@@ -1,13 +1,4 @@
-﻿using randomkiwi.Constants;
-using randomkiwi.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Services.Http;
+﻿namespace randomkiwi.Services.Http;
 
 /// <summary>
 /// Defines the contract for HTTP client configuration options including base address and identification properties.

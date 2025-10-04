@@ -1,14 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using randomkiwi.Dto;
-using randomkiwi.Interfaces;
-using randomkiwi.Models;
-using randomkiwi.Services.Http;
 using randomkiwi.Utilities.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace randomkiwi.Services;
 

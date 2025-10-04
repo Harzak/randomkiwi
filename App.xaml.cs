@@ -1,6 +1,4 @@
-﻿using randomkiwi.Interfaces;
-
-namespace randomkiwi;
+﻿namespace randomkiwi;
 
 public partial class App : Application
 {
@@ -14,7 +12,7 @@ public partial class App : Application
     {
         base.OnStart();
 
-     
+
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

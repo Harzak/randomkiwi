@@ -1,9 +1,6 @@
-using randomkiwi.Interfaces;
-using System.Net;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using randomkiwi.Models;
-using randomkiwi.LogMessages;
+using System.Net;
 
 namespace randomkiwi.Services;
 

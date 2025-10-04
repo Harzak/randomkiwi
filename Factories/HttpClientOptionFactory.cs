@@ -1,13 +1,4 @@
-﻿using randomkiwi.Constants;
-using randomkiwi.Interfaces;
-using randomkiwi.Services.Http;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using randomkiwi.Services.Http;
 
 namespace randomkiwi.Factories;
 
@@ -18,7 +9,7 @@ internal sealed class HttpClientOptionFactory : IHttpClientOptionFactory
 {
     private readonly IWikipediaUrlBuilder _urlBuilder;
 
-    public HttpClientOptionFactory(IWikipediaUrlBuilder  urlBuilder)
+    public HttpClientOptionFactory(IWikipediaUrlBuilder urlBuilder)
     {
         _urlBuilder = urlBuilder;
     }

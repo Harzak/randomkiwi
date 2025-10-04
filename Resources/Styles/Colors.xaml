@@ -15,7 +15,6 @@
     <Color x:Key="Tertiary">#2B0B98</Color>
 
     <Color x:Key="DarkBackground">#17171a</Color>
-    <!--  101418  -->
     <Color x:Key="LightOnDarkBackground">#EAECF0</Color>
     <Color x:Key="LightBackground">#F2F2F2</Color>
     <Color x:Key="DarkOnLightBackground">#0D0D0D</Color>
@@ -45,7 +44,7 @@
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}" />
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}" />
 
-    <SolidColorBrush x:Key="KiwikBrush" Color="{StaticResource Kiwi}" />
+    <SolidColorBrush x:Key="KiwiBrush" Color="{StaticResource Kiwi}" />
 
     <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}" />
     <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}" />

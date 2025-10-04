@@ -1,12 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using randomkiwi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Services;
+﻿namespace randomkiwi.Services;
 
 /// <summary>
 /// Service for tracking and analyzing user navigation patterns and behavior

@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using randomkiwi.ViewModels;
-
-namespace randomkiwi.Views;
+﻿namespace randomkiwi.Views;
 
 public partial class MainView : ContentPage
 {

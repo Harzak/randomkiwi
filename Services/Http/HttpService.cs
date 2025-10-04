@@ -1,18 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using randomkiwi.Constants;
-using randomkiwi.Interfaces;
-using randomkiwi.LogMessages;
 using randomkiwi.Utilities.Results;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace randomkiwi.Services.Http;
 
@@ -34,9 +24,9 @@ public class HttpService : IHttpService, IDisposable
     private string _user_agent;
 
     private HttpService(
-        HttpClient httpClient, 
-        IDateTimeFacade timeProvider, 
-        IHttpClientOptionFactory httpClientOptionFactory, 
+        HttpClient httpClient,
+        IDateTimeFacade timeProvider,
+        IHttpClientOptionFactory httpClientOptionFactory,
         ILogger<HttpService> logger)
     {
         _httpClient = httpClient;

@@ -15,7 +15,7 @@ public partial class SettingsView : ContentPage
 
     private void SelecteduCultureIndexChanged(object sender, EventArgs e)
     {
-        if (sender is Picker picker 
+        if (sender is Picker picker
             && picker.SelectedItem is CultureInfo culture
             && picker.IsLoaded)
         {

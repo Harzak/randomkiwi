@@ -1,11 +1,4 @@
-﻿using randomkiwi.Constants;
-using randomkiwi.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace randomkiwi.Services.Http;
 
@@ -34,7 +27,7 @@ internal sealed class WikipediaUrlBuilder : IWikipediaUrlBuilder
             throw new ArgumentException("Article title cannot be null or empty.", nameof(title));
         }
 
-        string formattedTitle = title.Replace(" ", "_", StringComparison.InvariantCulture); 
+        string formattedTitle = title.Replace(" ", "_", StringComparison.InvariantCulture);
         string encodedTitle = Uri.EscapeDataString(formattedTitle);
         return new Uri(this.BuildBaseUri(), $"/wiki/{encodedTitle}");
     }

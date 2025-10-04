@@ -1,6 +1,4 @@
-﻿global using randomkiwi.ViewModels;
-global using randomkiwi.Utilities;
-global using randomkiwi.Configuration;
+﻿global using randomkiwi.Configuration;
 global using randomkiwi.Constants;
 global using randomkiwi.Dto;
 global using randomkiwi.Factories;
@@ -8,3 +6,5 @@ global using randomkiwi.Interfaces;
 global using randomkiwi.LogMessages;
 global using randomkiwi.Models;
 global using randomkiwi.Services;
+global using randomkiwi.Utilities;
+global using randomkiwi.ViewModels;
