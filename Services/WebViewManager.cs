@@ -20,15 +20,6 @@ public sealed class WebViewManager : IWebViewManager
 
     private WebView? _webView;
 
-    /// <inheritdoc/>
-    public event EventHandler<WebNavigatingEventArgs>? Navigating;
-
-    /// <inheritdoc/>
-    public event EventHandler<WebNavigatedEventArgs>? Navigated;
-
-    /// <inheritdoc/>
-    public event EventHandler? NavigationStateChanged;
-
     public WebViewManager(
         IWebViewConfigurator webViewConfigurator,
         IMessenger messenger,
@@ -59,9 +50,6 @@ public sealed class WebViewManager : IWebViewManager
     public bool CanGoBack => _webView?.CanGoBack ?? false;
 
     /// <inheritdoc/>
-    public bool CanGoForward => _webView?.CanGoForward ?? false;
-
-    /// <inheritdoc/>
     public View CreateView()
     {
         if (_webView == null)
@@ -75,7 +63,53 @@ public sealed class WebViewManager : IWebViewManager
     }
 
     /// <inheritdoc/>
-    public async Task<string?> EvaluateJavaScriptAsync(string script)
+    public void GoBack()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            _webView?.GoBack();
+        });
+    }
+
+    private void OnWebViewNavigating(object? sender, WebNavigatingEventArgs e)
+    {
+        _isNavigated = false;
+
+        _messenger.Send(new NavigationStartedMessage(e.Url?.ToString() ?? ""));
+        WikipediaWebViewLogs.NavigationStarted(_logger, e.Url?.ToString());
+    }
+
+    private async void OnWebViewNavigated(object? sender, WebNavigatedEventArgs e)
+    {
+        _isNavigated = true;
+
+        bool isSuccess = e.Result == WebNavigationResult.Success;
+
+        if (isSuccess)
+        {
+            await this.EvaluateEmbeddedPageScriptAsync().ConfigureAwait(false);
+        }
+
+        WikipediaWebViewLogs.NavigationCompleted(_logger, e.Url, isSuccess);
+        _messenger.Send(new NavigationCompletedMessage(e.Url, isSuccess));
+    }
+
+    private void SetCookies(Uri targetUri)
+    {
+        CookieContainer? cookies = _webViewConfigurator.CreateCookieContainer(targetUri);
+        if (cookies != null && _webView != null)
+        {
+            _webView.Cookies = cookies;
+        }
+    }
+
+    private async Task EvaluateEmbeddedPageScriptAsync()
+    {
+        string uiFormattingScriptContent = _scriptLoader.Load(AppConsts.SCRIPT_UI_FORMATTING_FILENAME);
+        await EvaluateJavaScriptAsync(uiFormattingScriptContent).ConfigureAwait(false);
+    }
+
+    private async Task<string?> EvaluateJavaScriptAsync(string script)
     {
         if (_webView != null && _isNavigated)
         {
@@ -88,87 +122,6 @@ public sealed class WebViewManager : IWebViewManager
         else
         {
             return null;
-        }
-    }
-
-    /// <inheritdoc/>
-    public void GoBack()
-    {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            _webView?.GoBack();
-        });
-    }
-
-    /// <inheritdoc/>
-    public void GoForward()
-    {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            _webView?.GoForward();
-        });
-    }
-
-    /// <inheritdoc/>
-    public void Reload()
-    {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            _webView?.Reload();
-        });
-    }
-
-    private void OnWebViewNavigating(object? sender, WebNavigatingEventArgs e)
-    {
-        _isNavigated = false;
-        HandleNavigating(e);
-        Navigating?.Invoke(sender, e);
-    }
-
-    private void OnWebViewNavigated(object? sender, WebNavigatedEventArgs e)
-    {
-        _isNavigated = true;
-        HandleNavigated(e);
-        Navigated?.Invoke(sender, e);
-        NavigationStateChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void HandleNavigating(WebNavigatingEventArgs args)
-    {
-        WikipediaWebViewLogs.NavigationStarted(_logger, args.Url?.ToString());
-
-        _messenger.Send(new NavigationStartedMessage(args.Url?.ToString() ?? ""));
-    }
-
-    private void HandleNavigated(WebNavigatedEventArgs args)
-    {
-        bool isSuccess = args.Result == WebNavigationResult.Success;
-
-        if (isSuccess && Uri.TryCreate(args.Url, UriKind.Absolute, out Uri? uri))
-        {
-            Task.Run(async () =>
-            {
-                string scriptContent = _scriptLoader.Load(AppConsts.SCRIPT_UI_FORMATTING_FILENAME);
-                await EvaluateJavaScriptAsync(scriptContent).ConfigureAwait(false);
-            });
-            WikipediaWebViewLogs.NavigationCompleted(_logger, args.Url, isSuccess);
-            _messenger.Send(new NavigationCompletedMessage(uri.ToString(), isSuccess));
-            WikipediaWebViewLogs.LinkClicked(_logger, args.Url);
-            _messenger.Send(new LinkClickedMessage(uri));
-        }
-    }
-
-    private void SetCookies(Uri targetUri)
-    {
-        CookieContainer? cookies = _webViewConfigurator.CreateCookieContainer(targetUri);
-        if (cookies != null && _webView != null)
-        {
-            _webView.Cookies = cookies;
-            WikipediaWebViewLogs.CookieCreated(_logger, targetUri);
-        }
-        else
-        {
-            WikipediaWebViewLogs.CookieCreationFailed(_logger, targetUri);
         }
     }
 

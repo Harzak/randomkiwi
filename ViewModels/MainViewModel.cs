@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using randomkiwi.Interfaces;
 using randomkiwi.Models;
 using randomkiwi.Utilities;
@@ -7,9 +8,10 @@ using randomkiwi.Utilities.Results;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class MainViewModel : ObservableObject
+public sealed partial class MainViewModel : ObservableObject, IRecipient<NavigationStartedMessage>, IRecipient<NavigationCompletedMessage>
 {
     private readonly IArticleCatalog _articleCatalog;
+    private readonly IMessenger _messenger;
     private readonly IDebounceAction _debounceAction;
 
     public bool IsLoaded => !this.IsLoading && !this.IsInError;
@@ -30,12 +32,16 @@ public sealed partial class MainViewModel : ObservableObject
 
     public MainViewModel(
         WikipediaWebViewViewModel webViewViewModel,
-        IArticleCatalog articleCatalog, 
+        IArticleCatalog articleCatalog,
+        IMessenger messenger,
         Func<int, IDebounceAction> createDebounceAction)
     {
-        _webViewViewModel = webViewViewModel;
-        _articleCatalog = articleCatalog;
+        _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
+        _articleCatalog = articleCatalog ?? throw new ArgumentNullException(nameof(articleCatalog));
+        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _debounceAction = createDebounceAction?.Invoke(500) ?? throw new ArgumentNullException(nameof(createDebounceAction));
+
+        _messenger.RegisterAll(this);
     }
 
     public async Task InitializeAsync()
@@ -102,6 +108,22 @@ public sealed partial class MainViewModel : ObservableObject
         MainThread.BeginInvokeOnMainThread(() =>
         {
             ErrorMessage = string.IsNullOrWhiteSpace(message) ? "Unknown error." : message;
+        });
+    }
+
+    public void Receive(NavigationStartedMessage message)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            this.IsLoading = true;
+        });
+    }
+
+    public void Receive(NavigationCompletedMessage message)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            this.IsLoading = false;
         });
     }
 }

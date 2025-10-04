@@ -2,7 +2,8 @@
     'use strict';
 
     const headerSelectors = [
-        '.header-container.header-chrome'
+        '.header-container.header-chrome',
+        '#siteNotice'
     ];
 
     const footerSelectors = [
@@ -28,5 +29,5 @@
     hideElements(headerSelectors);
     hideElements(footerSelectors);
 
-    return 'Wikipedia artciel ui formatting completed';
+    return 'completed';
 })();

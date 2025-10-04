@@ -42,10 +42,10 @@ internal sealed class ScriptLoader : IScriptLoader
         using Stream? stream = assembly.GetManifestResourceStream(resourceName)??throw new FileNotFoundException($"Script not found: {scriptName}");
         using StreamReader reader = new(stream);
         string script = reader.ReadToEnd();
+        string scriptMinified = MinifyScript(script);
 
-        _cache[resourceName] = script;
-
-        return MinifyScript(script);
+        _cache[resourceName] = scriptMinified;
+        return scriptMinified;
     }
 
     private string MinifyScript(string script)

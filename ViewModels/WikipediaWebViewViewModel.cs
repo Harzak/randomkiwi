@@ -14,8 +14,6 @@ namespace randomkiwi.ViewModels;
 /// </summary>
 public sealed partial class WikipediaWebViewViewModel : ObservableObject
 {
-    private readonly ILogger<WikipediaWebViewViewModel> _logger;
-    private readonly IMessenger _messenger;
     private readonly IWebViewManager _webViewManager;
 
     /// <summary>
@@ -25,31 +23,17 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
 
     public bool CanGoBack => _webViewManager.CanGoBack;
 
-    public bool CanGoForward => _webViewManager.CanGoForward;
-
-    public WikipediaWebViewViewModel(
-        IWebViewManager webViewManager,
-        IMessenger messenger,
-        ILogger<WikipediaWebViewViewModel> logger)
+    public WikipediaWebViewViewModel(IWebViewManager webViewManager)
     {
         _webViewManager = webViewManager ?? throw new ArgumentNullException(nameof(webViewManager));
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
-        _webViewManager.NavigationStateChanged += OnNavigationStateChanged;
     }
 
     public void NavigateToUrl(Uri uri)
     {
         if (uri == null)
         {
-            WikipediaWebViewLogs.UrlChangingToNull(_logger);
             return;
         }
-
-        WikipediaWebViewLogs.UrlChanging(_logger, _webViewManager.Source?.ToString(), uri.ToString());
-        _messenger.Send(new UrlChangingMessage(_webViewManager.Source?.ToString() ?? "", uri.ToString()));
-
         _webViewManager.Source = uri;
     }
 
@@ -59,21 +43,8 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
         _webViewManager.GoBack();
     }
 
-    [RelayCommand(CanExecute = nameof(CanGoForward))]
-    public void GoForward()
-    {
-        _webViewManager.GoForward();
-    }
-
-    [RelayCommand]
-    public void Reload()
-    {
-        _webViewManager.Reload();
-    }
-
     private void OnNavigationStateChanged(object? sender, EventArgs e)
     {
-        GoBackCommand.NotifyCanExecuteChanged();
-        GoForwardCommand.NotifyCanExecuteChanged();
+        this.GoBackCommand.NotifyCanExecuteChanged();
     }
 }

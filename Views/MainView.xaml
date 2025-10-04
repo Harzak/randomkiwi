@@ -12,7 +12,9 @@
     <Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
 
         <!--  Article  -->
-        <controls:WikipediaWebView Grid.Row="0" Grid.Column="0" BindingContext="{Binding WebViewViewModel}" />
+        <controls:WikipediaWebView Grid.Row="0" Grid.Column="0"
+                                   BindingContext="{Binding WebViewViewModel}"
+                                   IsVisible="{Binding IsLoaded}" />
 
         <!--  Error messages  -->
         <Label Grid.Row="0" Grid.Column="0" HorizontalOptions="Center"
