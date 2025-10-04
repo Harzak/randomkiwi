@@ -77,6 +77,10 @@
 	  <None Remove="LICENSE" />
 	  <None Remove="README.md" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Scripts\wikipedia-article-ui-formatting.js" />
+	</ItemGroup>
 	
 	<ItemGroup>
 	  <Compile Update="Resources\Languages.Designer.cs">

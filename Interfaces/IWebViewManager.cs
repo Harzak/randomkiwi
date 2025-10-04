@@ -6,7 +6,7 @@ namespace randomkiwi.Interfaces;
 /// <summary>
 /// Provides an abstraction for managing WebView functionality while maintaining MVVM separation.
 /// </summary>
-public interface IWebViewManager
+public interface IWebViewManager  : IDisposable
 {
     /// <summary>
     /// Occurs when the WebView starts navigating to a new page.

@@ -262,7 +262,6 @@ public class HttpService : IHttpService, IDisposable
         return false;
     }
 
-    #region Dispose
     ~HttpService() => Dispose(false);
 
     public void Dispose()
@@ -284,5 +283,4 @@ public class HttpService : IHttpService, IDisposable
             _disposedValue = true;
         }
     }
-    #endregion
 }

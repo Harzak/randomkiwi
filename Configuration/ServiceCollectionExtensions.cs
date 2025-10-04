@@ -46,6 +46,7 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IUserMetricsService, UserMetricsService>();
         collection.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
         collection.AddTransient<IWebViewManager, WebViewManager>();
+        collection.AddSingleton<IScriptLoader, ScriptLoader>();
 
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();

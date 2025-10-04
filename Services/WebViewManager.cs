@@ -10,11 +10,13 @@ namespace randomkiwi.Services;
 /// <summary>
 /// Manages WebView functionality while providing an abstraction layer for MVVM compliance.
 /// </summary>
-public class WebViewManager : IWebViewManager
+public sealed class WebViewManager : IWebViewManager
 {
     private readonly IWebViewConfigurator _webViewConfigurator;
     private readonly IMessenger _messenger;
+    private readonly IScriptLoader _scriptLoader;
     private readonly ILogger<WebViewManager> _logger;
+    private bool _isNavigated;
 
     private WebView? _webView;
 
@@ -30,10 +32,12 @@ public class WebViewManager : IWebViewManager
     public WebViewManager(
         IWebViewConfigurator webViewConfigurator,
         IMessenger messenger,
+        IScriptLoader scriptLoader,
         ILogger<WebViewManager> logger)
     {
         _webViewConfigurator = webViewConfigurator ?? throw new ArgumentNullException(nameof(webViewConfigurator));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        _scriptLoader = scriptLoader ?? throw new ArgumentNullException(nameof(scriptLoader));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -73,7 +77,7 @@ public class WebViewManager : IWebViewManager
     /// <inheritdoc/>
     public async Task<string?> EvaluateJavaScriptAsync(string script)
     {
-        if (_webView != null)
+        if (_webView != null && _isNavigated)
         {
             return await MainThread.InvokeOnMainThreadAsync(async () =>
             {
@@ -116,12 +120,14 @@ public class WebViewManager : IWebViewManager
 
     private void OnWebViewNavigating(object? sender, WebNavigatingEventArgs e)
     {
+        _isNavigated = false;
         HandleNavigating(e);
         Navigating?.Invoke(sender, e);
     }
 
     private void OnWebViewNavigated(object? sender, WebNavigatedEventArgs e)
     {
+        _isNavigated = true;
         HandleNavigated(e);
         Navigated?.Invoke(sender, e);
         NavigationStateChanged?.Invoke(this, EventArgs.Empty);
@@ -131,25 +137,24 @@ public class WebViewManager : IWebViewManager
     {
         WikipediaWebViewLogs.NavigationStarted(_logger, args.Url?.ToString());
 
-            _messenger.Send(new NavigationStartedMessage(args.Url?.ToString() ?? ""));
+        _messenger.Send(new NavigationStartedMessage(args.Url?.ToString() ?? ""));
     }
 
     private void HandleNavigated(WebNavigatedEventArgs args)
     {
         bool isSuccess = args.Result == WebNavigationResult.Success;
 
-        if (Uri.TryCreate(args.Url, UriKind.Absolute, out Uri? uri))
+        if (isSuccess && Uri.TryCreate(args.Url, UriKind.Absolute, out Uri? uri))
         {
-            WikipediaWebViewLogs.NavigationCompleted(_logger, args.Url, isSuccess);
-
-            _messenger.Send(new NavigationCompletedMessage(uri.ToString(), isSuccess));
-
-            if (isSuccess)
+            Task.Run(async () =>
             {
-                WikipediaWebViewLogs.LinkClicked(_logger, args.Url);
-
-                _messenger.Send(new LinkClickedMessage(uri));
-            }
+                string scriptContent = _scriptLoader.Load(AppConsts.SCRIPT_UI_FORMATTING_FILENAME);
+                await EvaluateJavaScriptAsync(scriptContent).ConfigureAwait(false);
+            });
+            WikipediaWebViewLogs.NavigationCompleted(_logger, args.Url, isSuccess);
+            _messenger.Send(new NavigationCompletedMessage(uri.ToString(), isSuccess));
+            WikipediaWebViewLogs.LinkClicked(_logger, args.Url);
+            _messenger.Send(new LinkClickedMessage(uri));
         }
     }
 
@@ -166,4 +171,27 @@ public class WebViewManager : IWebViewManager
             WikipediaWebViewLogs.CookieCreationFailed(_logger, targetUri);
         }
     }
+
+    private bool _disposedValue;
+    private void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                if (_webView != null)
+                {
+                    _webView.Navigating -= OnWebViewNavigating;
+                    _webView.Navigated -= OnWebViewNavigated;
+                }
+            }
+            _disposedValue = true;
+        }
+    }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    ~WebViewManager() => Dispose(false);
 }
