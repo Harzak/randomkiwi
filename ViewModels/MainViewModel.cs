@@ -1,63 +1,73 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using randomkiwi.Events;
 using randomkiwi.Utilities.Results;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class MainViewModel : ObservableObject
+public sealed partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly IArticleCatalog _articleCatalog;
-    private readonly IDebounceAction _debounceAction;
+    private readonly ILoadingService _loadingService;
 
     [ObservableProperty]
     private WikipediaWebViewViewModel _webViewViewModel;
 
+    public bool IsLoaded => !this.IsLoading && !this.IsInError;
+    public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsLoaded))]
+    [NotifyPropertyChangedFor(nameof(IsInError))]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsLoaded))]
+    [NotifyPropertyChangedFor(nameof(IsInError))]
+    private string? _errorMessage;
+
     public MainViewModel(
         WikipediaWebViewViewModel webViewViewModel,
         IArticleCatalog articleCatalog,
-        Func<int, IDebounceAction> createDebounceAction)
+        ILoadingService loadingService)
     {
         _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
         _articleCatalog = articleCatalog ?? throw new ArgumentNullException(nameof(articleCatalog));
-        _debounceAction = createDebounceAction?.Invoke(500) ?? throw new ArgumentNullException(nameof(createDebounceAction));
+        _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
+
+        _loadingService.IsLoadingChanged += OnIsLoadingChanged;
     }
 
     public async Task InitializeAsync()
     {
-        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(_articleCatalog.InitializeAsync);
-        await this.ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
+        await this.ExecuteWithLoadingAsync(_articleCatalog.InitializeAsync).ConfigureAwait(false);
     }
 
     [RelayCommand]
     private async Task PreviousArticle()
     {
-        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(() => Task.FromResult(_articleCatalog.Previous()));
-        await this.ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
+        await this.ExecuteWithLoadingAsync(() => Task.FromResult(_articleCatalog.Previous())).ConfigureAwait(false);
     }
 
     [RelayCommand]
     private async Task NextArticle()
     {
-        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(_articleCatalog.NextAsync);
-        await this.ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
+        await this.ExecuteWithLoadingAsync(_articleCatalog.NextAsync).ConfigureAwait(false);
     }
 
     [RelayCommand]
     private async Task AddBookmark()
     {
-        Task<OperationResult> operation() => _debounceAction.ExecuteAsync(_articleCatalog.BookmarkAsync);
-        await this.ExecuteWithLoadingAsync(operation).ConfigureAwait(false);
+        await this.ExecuteWithLoadingAsync(_articleCatalog.BookmarkAsync).ConfigureAwait(false);
     }
 
     private async Task ExecuteWithLoadingAsync(Func<Task<OperationResult>> operation)
     {
-        this.WebViewViewModel.ErrorMessage = null;
-        this.WebViewViewModel.IsLoading = true; //todo: global loading indicator
+        this.ErrorMessage = null;
+        using IDisposable loadingToken = _loadingService.BeginLoading();
 
         OperationResult result = await operation().ConfigureAwait(false);
         this.HandleResult(result);
-
-        this.WebViewViewModel.IsLoading = false;
     }
 
     private void HandleResult(OperationResult result)
@@ -68,7 +78,36 @@ public sealed partial class MainViewModel : ObservableObject
         }
         else
         {
-            this.WebViewViewModel.ErrorMessage = string.IsNullOrWhiteSpace(result.ErrorMessage) ? "Unknown error." : result.ErrorMessage;
+            this.ErrorMessage = string.IsNullOrWhiteSpace(result.ErrorMessage) ? "Unknown error." : result.ErrorMessage;
         }
     }
+
+    private void OnIsLoadingChanged(object? sender, LoadingChangedEventArgs e)
+    {
+        this.IsLoading = e.IsLoading;
+    }
+
+    private bool _disposed;
+    private void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                if (_loadingService != null)
+                {
+                    _loadingService.IsLoadingChanged -= OnIsLoadingChanged;
+                }
+                _articleCatalog?.Dispose();
+            }
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
 }

@@ -38,10 +38,9 @@ public static class ServiceCollectionExtensions
 
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
-        collection.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
-        collection.AddSingleton<Func<int, IDebounceAction>>(serviceProvider =>
+        collection.AddSingleton<ILoadingService>(serviceProvider =>
         {
-            return delayMs => new DebounceAction(delayMs);
+            return new LoadingService(debounceMilliseconds: 300, minimumDisplayMilliseconds: 1000);
         });
     }
 

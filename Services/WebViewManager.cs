@@ -10,21 +10,22 @@ namespace randomkiwi.Services;
 public sealed class WebViewManager : IWebViewManager
 {
     private readonly IWebViewConfigurator _webViewConfigurator;
-    private readonly IMessenger _messenger;
+    private readonly ILoadingService _loadingService;
     private readonly IScriptLoader _scriptLoader;
     private readonly ILogger<WebViewManager> _logger;
-    private bool _isNavigated;
 
+    private bool _isNavigated;
+    private IDisposable? _loadingToken;
     private WebView? _webView;
 
     public WebViewManager(
         IWebViewConfigurator webViewConfigurator,
-        IMessenger messenger,
+        ILoadingService loadingService,
         IScriptLoader scriptLoader,
         ILogger<WebViewManager> logger)
     {
         _webViewConfigurator = webViewConfigurator ?? throw new ArgumentNullException(nameof(webViewConfigurator));
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
         _scriptLoader = scriptLoader ?? throw new ArgumentNullException(nameof(scriptLoader));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -70,9 +71,8 @@ public sealed class WebViewManager : IWebViewManager
 
     private void OnWebViewNavigating(object? sender, WebNavigatingEventArgs e)
     {
+        _loadingToken = _loadingService.BeginLoading();
         _isNavigated = false;
-
-        _messenger.Send(new NavigationStartedMessage(e.Url?.ToString() ?? ""));
         WikipediaWebViewLogs.NavigationStarted(_logger, e.Url?.ToString());
     }
 
@@ -88,7 +88,7 @@ public sealed class WebViewManager : IWebViewManager
         }
 
         WikipediaWebViewLogs.NavigationCompleted(_logger, e.Url, isSuccess);
-        _messenger.Send(new NavigationCompletedMessage(e.Url, isSuccess));
+        _loadingToken?.Dispose();
     }
 
     private void SetCookies(Uri targetUri)
@@ -129,6 +129,8 @@ public sealed class WebViewManager : IWebViewManager
         {
             if (disposing)
             {
+                _loadingToken?.Dispose();
+                _loadingService?.Dispose();
                 if (_webView != null)
                 {
                     _webView.Navigating -= OnWebViewNavigating;
