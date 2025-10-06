@@ -2,11 +2,13 @@
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class SettingsViewModel : ObservableObject
+public sealed partial class SettingsViewModel : BaseRoutableViewModel
 {
     public IAppConfiguration AppConfig { get; }
 
-    public SettingsViewModel(IAppConfiguration appConfig)
+    public override string Name => nameof(SettingsViewModel);
+
+    public SettingsViewModel(IAppConfiguration appConfig, INavigationService navigationService) : base(navigationService)
     {
         this.AppConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
     }
@@ -16,5 +18,6 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 
     }
+
 }
 

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using randomkiwi.Utilities.Results;
+using System.Globalization;
 using System.Reflection;
 
 namespace randomkiwi.Configuration;
@@ -8,6 +9,8 @@ namespace randomkiwi.Configuration;
 /// </summary>
 internal sealed class AppConfiguration : IAppConfiguration
 {
+    private readonly IUserPreferenceRepository _userPreferenceRepository;
+
     private CultureInfo _currentCulture;
     private AppTheme _currentTheme;
 
@@ -70,8 +73,9 @@ internal sealed class AppConfiguration : IAppConfiguration
 
     public Version AppVersion { get; }
 
-    public AppConfiguration()
+    public AppConfiguration(IUserPreferenceRepository userPreferenceRepository)
     {
+        _userPreferenceRepository = userPreferenceRepository ?? throw new ArgumentNullException(nameof(userPreferenceRepository));
         _currentCulture = CultureInfo.InvariantCulture;
 
         this.SupportedCultures = [new("en-US"), new("fr-FR")];
@@ -79,16 +83,43 @@ internal sealed class AppConfiguration : IAppConfiguration
         this.AppVersion = Assembly.GetEntryAssembly()?.GetName()?.Version ?? new Version(0, 0, 0, 0);
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
+    {
+        if (!await this.TryLoadSavedPreferencesAsync().ConfigureAwait(false))
+        {
+            this.LoadDefaultPreferences();
+        }
+    }
+
+    private async Task<bool> TryLoadSavedPreferencesAsync()
+    {
+        OperationResult<UserPreferenceModel> preferencesResult = await _userPreferenceRepository.LoadAsync().ConfigureAwait(false);
+        if (preferencesResult.IsSuccess && preferencesResult.HasContent)
+        {
+            this.CurrentCulture = this.SupportedCultures.FirstOrDefault(c => c.Name.Equals(preferencesResult.Content.AppLanguage, StringComparison.OrdinalIgnoreCase))
+                                        ?? this.GetDefaultCulture();
+
+            this.CurrentTheme = this.AvailableThemes.FirstOrDefault(x => x == preferencesResult.Content.Theme);
+
+            return true;
+        }
+        return false;
+    }
+
+    private void LoadDefaultPreferences()
     {
         this.CurrentCulture = this.GetDefaultCulture();
         this.CurrentTheme = this.GetDefaultTheme();
-        return Task.CompletedTask;
     }
 
-    public Task SaveAsync()
+    public async Task SaveAsync()
     {
-        throw new NotImplementedException();
+        UserPreferenceModel preferences = new()
+        {
+            AppLanguage = this.CurrentCulture.Name,
+            Theme = this.CurrentTheme,
+        };
+        await _userPreferenceRepository.SaveAsync(preferences).ConfigureAwait(false);
     }
 
     private CultureInfo GetDefaultCulture()
@@ -98,8 +129,7 @@ internal sealed class AppConfiguration : IAppConfiguration
 
     private AppTheme GetDefaultTheme()
     {
-        return AppTheme.Dark;
-        //return Application.Current?.UserAppTheme ?? AppTheme.Unspecified;
+        return Application.Current?.UserAppTheme ?? AppTheme.Unspecified;
     }
 }
 

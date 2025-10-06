@@ -8,3 +8,6 @@ global using randomkiwi.Models;
 global using randomkiwi.Services;
 global using randomkiwi.Utilities;
 global using randomkiwi.ViewModels;
+global using randomkiwi.Navigation;
+global using randomkiwi.Navigation.Context;
+global using randomkiwi.Navigation.Guards;

@@ -13,13 +13,12 @@ namespace randomkiwi.Services;
 /// </summary>
 public sealed class LoadingService : ILoadingService
 {
-    private int _activeOperations;
     private readonly Lock _lock;
     private CancellationTokenSource? _debounceTokenSource;
-    private readonly int _debounceMilliseconds;
     private DateTime? _loadingStartTime;
+    private readonly int _debounceMilliseconds;
     private readonly int _minimumDisplayMilliseconds;
-
+    private int _activeOperations;
     public bool IsLoading => _activeOperations > 0;
 
     public event EventHandler<LoadingChangedEventArgs>? IsLoadingChanged;
@@ -117,7 +116,18 @@ public sealed class LoadingService : ILoadingService
         _debounceTokenSource = new CancellationTokenSource();
         CancellationToken token = _debounceTokenSource.Token;
 
-        await Task.Delay(_debounceMilliseconds, token).ConfigureAwait(false);
+        try
+        {
+            await Task.Delay(_debounceMilliseconds, token).ConfigureAwait(false);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     private void InvokeIsLoadingChanged(bool isLoading)

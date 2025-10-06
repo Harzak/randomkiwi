@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class BookmarksViewModel : ObservableObject
+public sealed partial class BookmarksViewModel : BaseRoutableViewModel
 {
+    public override string Name => nameof(BookmarksViewModel);
+    
     [ObservableProperty]
     private List<BookmarkModel> _bookmarks;
 
-    public BookmarksViewModel()
+    public BookmarksViewModel(INavigationService navigationService) : base(navigationService)
     {
         _bookmarks =
         [

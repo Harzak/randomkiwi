@@ -5,16 +5,17 @@ using randomkiwi.Utilities.Results;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class MainViewModel : ObservableObject, IDisposable
+public sealed partial class MainViewModel : BaseRoutableViewModel
 {
     private readonly IArticleCatalog _articleCatalog;
     private readonly ILoadingService _loadingService;
 
+    public override string Name => nameof(MainViewModel);
+    public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
+    public bool IsLoaded => !this.IsLoading && !this.IsInError;
+
     [ObservableProperty]
     private WikipediaWebViewViewModel _webViewViewModel;
-
-    public bool IsLoaded => !this.IsLoading && !this.IsInError;
-    public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLoaded))]
@@ -29,7 +30,9 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     public MainViewModel(
         WikipediaWebViewViewModel webViewViewModel,
         IArticleCatalog articleCatalog,
-        ILoadingService loadingService)
+        ILoadingService loadingService,
+        INavigationService navigationService)
+    : base(navigationService)
     {
         _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
         _articleCatalog = articleCatalog ?? throw new ArgumentNullException(nameof(articleCatalog));
@@ -88,26 +91,18 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     }
 
     private bool _disposed;
-    private void Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
-        if (!_disposed)
+        if (disposing && !_disposed)
         {
-            if (disposing)
-            {
-                if (_loadingService != null)
-                {
-                    _loadingService.IsLoadingChanged -= OnIsLoadingChanged;
-                }
-                _articleCatalog?.Dispose();
-            }
             _disposed = true;
+
+            if (_loadingService != null)
+            {
+                _loadingService.IsLoadingChanged -= OnIsLoadingChanged;
+            }
+            _articleCatalog?.Dispose();
         }
+        base.Dispose(disposing);
     }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
 }

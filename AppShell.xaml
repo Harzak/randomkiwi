@@ -12,7 +12,14 @@
 
             <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                    Aspect="AspectFit" Background="Transparent" HeightRequest="30"
-                   HorizontalOptions="Center" Source="logo.png" VerticalOptions="Center" />
+                   HorizontalOptions="Center" Source="logo.png" VerticalOptions="Center">
+                <Image.Margin>
+                    <OnPlatform x:TypeArguments="Thickness">
+                        <!--  compensates Android hamburger menu icon, Shell is actively clipping the title bounds  -->
+                        <On Platform="Android" Value="-70,0,0,0" />
+                    </OnPlatform>
+                </Image.Margin>
+            </Image>
 
             <ImageButton Grid.Column="1" Aspect="Center" HeightRequest="44"
                          HorizontalOptions="End"

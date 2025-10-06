@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
+using randomkiwi.Repositories;
 using randomkiwi.Services.Http;
 using System.Net;
 
@@ -35,12 +37,21 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
         collection.AddTransient<IWebViewManager, WebViewManager>();
         collection.AddSingleton<IScriptLoader, ScriptLoader>();
+        collection.AddSingleton<IUserPreferenceRepository, UserPreferenceRepository>();
+
+        collection.AddSingleton<IJsonStorage<UserPreferenceModel>>(provider =>
+        {
+            var logger = provider.GetRequiredService<ILogger<JsonStorage<UserPreferenceModel>>>();
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDirectory = Path.Combine(appDataPath, AppConsts.APP_NAME);
+            return new JsonStorage<UserPreferenceModel>(appDirectory, AppConsts.USER_PREFERENCES_FILE, logger);
+        });
 
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
         collection.AddSingleton<ILoadingService>(serviceProvider =>
         {
-            return new LoadingService(debounceMilliseconds: 300, minimumDisplayMilliseconds: 1000);
+            return new LoadingService(debounceMilliseconds: 500, minimumDisplayMilliseconds: 300);
         });
     }
 
