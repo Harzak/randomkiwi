@@ -6,13 +6,25 @@ public partial class WikipediaWebView : ContentView
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object? sender, EventArgs e)
     {
         if (BindingContext is WikipediaWebViewViewModel viewModel)
         {
-            WebViewContainer.Content = viewModel.WebView;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                WebViewContainer.Content = viewModel.WebView;
+            });
         }
+    }
+
+    private void OnUnloaded(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            WebViewContainer.Content = null;
+        });
     }
 }

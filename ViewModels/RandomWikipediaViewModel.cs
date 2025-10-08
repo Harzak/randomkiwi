@@ -102,6 +102,7 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
             {
                 _loadingService.IsLoadingChanged -= OnIsLoadingChanged;
             }
+            this.WebViewViewModel?.Dispose();
             _articleCatalog?.Dispose();
         }
         base.Dispose(disposing);

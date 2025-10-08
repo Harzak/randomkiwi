@@ -7,7 +7,7 @@ namespace randomkiwi.ViewModels;
 /// <summary>
 /// Represents the view model for managing interactions with the WebView that displays Wikipedia articles.
 /// </summary>
-public sealed partial class WikipediaWebViewViewModel : ObservableObject
+public sealed partial class WikipediaWebViewViewModel : ObservableObject, IDisposable
 {
     private readonly IWebViewManager _webViewManager;
 
@@ -26,16 +26,15 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
         _webViewManager = webViewManager ?? throw new ArgumentNullException(nameof(webViewManager));
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        this.WebView = _webViewManager.CreateView();
-        return Task.CompletedTask;
+        this.WebView = await MainThread.InvokeOnMainThreadAsync(_webViewManager.CreateView).ConfigureAwait(false);
     }
 
     public void NavigateToUrl(Uri uri)
     {
         ArgumentNullException.ThrowIfNull(uri);
-        if(this.WebView == null)
+        if (this.WebView == null)
         {
             throw new InvalidOperationException("WebView is not initialized. Call InitializeAsync() before navigating.");
         }
@@ -54,4 +53,23 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
             _webViewManager.GoBack();
         });
     }
+
+    private bool _disposedValue;
+    private void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _webViewManager?.Dispose();
+            }
+            _disposedValue = true;
+        }
+    }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    ~WikipediaWebViewViewModel() => Dispose(false);
 }

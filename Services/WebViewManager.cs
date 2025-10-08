@@ -141,6 +141,7 @@ public sealed class WebViewManager : IWebViewManager
                     _webView.Navigating -= OnWebViewNavigating;
                     _webView.Navigated -= OnWebViewNavigated;
                 }
+                _webView = null;
             }
             _disposedValue = true;
         }

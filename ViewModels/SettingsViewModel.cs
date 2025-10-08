@@ -19,5 +19,10 @@ public sealed partial class SettingsViewModel : BaseRoutableViewModel
 
     }
 
+    public async override Task OnDestroyAsync()
+    {
+        await this.AppConfig.SaveAsync().ConfigureAwait(false);
+        await base.OnDestroyAsync().ConfigureAwait(false);
+    }
 }
 
