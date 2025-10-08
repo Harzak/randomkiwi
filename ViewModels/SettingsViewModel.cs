@@ -13,16 +13,9 @@ public sealed partial class SettingsViewModel : BaseRoutableViewModel
         this.AppConfig = appConfig ?? throw new ArgumentNullException(nameof(appConfig));
     }
 
-    internal void OnSelectedCultureChanged()
-    {
-
-
-    }
-
-    public async override Task OnDestroyAsync()
+    internal async void OnSettingsChanged()
     {
         await this.AppConfig.SaveAsync().ConfigureAwait(false);
-        await base.OnDestroyAsync().ConfigureAwait(false);
     }
 }
 

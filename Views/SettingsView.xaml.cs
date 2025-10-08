@@ -9,14 +9,31 @@ public partial class SettingsView : Grid
         InitializeComponent();
     }
 
-    private void SelecteduCultureIndexChanged(object sender, EventArgs e)
+    private void SelectedCultureIndexChanged(object sender, EventArgs e)
     {
         if (sender is Picker picker
-            && picker.SelectedItem is CultureInfo culture
+            && picker.SelectedItem is CultureInfo
             && picker.IsLoaded
             && BindingContext is SettingsViewModel viewModel)
         {
-            viewModel.OnSelectedCultureChanged();
+            popup.Show();
+            viewModel.OnSettingsChanged();
         }
+    }
+
+    private void SelectedThemeIndexChanged(object sender, EventArgs e)
+    {
+        if (sender is Picker picker
+            && picker.SelectedItem is AppTheme
+            && picker.IsLoaded
+            && BindingContext is SettingsViewModel viewModel)
+        {
+            viewModel.OnSettingsChanged();
+        }
+    }
+
+    private void ClosePopup_Clicked(object sender, EventArgs e)
+    {
+        popup.Dismiss();
     }
 }
