@@ -12,7 +12,7 @@ public partial class WikipediaWebView : ContentView
     {
         if (BindingContext is WikipediaWebViewViewModel viewModel)
         {
-            WebViewContainer.Content = viewModel.WebViewManager.CreateView();
+            WebViewContainer.Content = viewModel.WebView;
         }
     }
 }

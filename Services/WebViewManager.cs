@@ -36,7 +36,12 @@ public sealed class WebViewManager : IWebViewManager
         get => _webView?.Source is UrlWebViewSource urlSource ? new Uri(urlSource.Url) : null;
         set
         {
-            if (_webView != null && value != null)
+            if(_webView == null)
+            {
+                return;
+                throw new InvalidOperationException("WebView is not created. Call CreateView() before setting the Source.");
+            }
+            if (value != null)
             {
                 SetCookies(value);
                 _webView.Source = value.ToString();

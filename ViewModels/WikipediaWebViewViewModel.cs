@@ -18,17 +18,28 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject
 
     public bool CanGoBack => _webViewManager.CanGoBack;
 
+    [ObservableProperty]
+    private View? _webView;
+
     public WikipediaWebViewViewModel(IWebViewManager webViewManager)
     {
         _webViewManager = webViewManager ?? throw new ArgumentNullException(nameof(webViewManager));
     }
 
+    public Task InitializeAsync()
+    {
+        this.WebView = _webViewManager.CreateView();
+        return Task.CompletedTask;
+    }
+
     public void NavigateToUrl(Uri uri)
     {
-        if (uri == null)
+        ArgumentNullException.ThrowIfNull(uri);
+        if(this.WebView == null)
         {
-            return;
+            throw new InvalidOperationException("WebView is not initialized. Call InitializeAsync() before navigating.");
         }
+
         MainThread.BeginInvokeOnMainThread(() =>
         {
             _webViewManager.Source = uri;

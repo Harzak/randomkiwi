@@ -56,10 +56,10 @@
             <!--  Flyout Panel  -->
             <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
                                                       Dark={StaticResource DarkBackground}}"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Fill" WidthRequest="230">
+                    HorizontalOptions="Start" VerticalOptions="Fill" WidthRequest="230">
                 <Border.Shadow>
-                    <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="2,2" />
+                    <Shadow Brush="Black" Opacity="0.3" Radius="10"
+                            Offset="2,2" />
                 </Border.Shadow>
 
                 <Grid RowDefinitions="Auto,*">

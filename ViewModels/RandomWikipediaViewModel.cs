@@ -43,6 +43,7 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
 
     public async override Task OnInitializedAsync()
     {
+        await this.WebViewViewModel.InitializeAsync().ConfigureAwait(false);
         await this.ExecuteWithLoadingAsync(_articleCatalog.InitializeAsync).ConfigureAwait(false);
     }
 

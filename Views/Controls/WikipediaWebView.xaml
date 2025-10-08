@@ -7,6 +7,7 @@
              x:Name="Root"
              x:DataType="viewModels:WikipediaWebViewViewModel">
 
+
     <ContentPresenter x:Name="WebViewContainer" />
 
 </ContentView>
