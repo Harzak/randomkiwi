@@ -54,11 +54,13 @@
             </BoxView>
 
             <!--  Flyout Panel  -->
-            <Frame Padding="0"
-                   BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
-                                                     Dark={StaticResource DarkBackground}}"
-                   CornerRadius="0" HasShadow="True" HorizontalOptions="Start"
-                   VerticalOptions="FillAndExpand" WidthRequest="230">
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
+                                                      Dark={StaticResource DarkBackground}}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Fill" WidthRequest="230">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="2,2" />
+                </Border.Shadow>
 
                 <Grid RowDefinitions="Auto,*">
                     <!--  Flyout Header  -->
@@ -69,33 +71,33 @@
                     </Grid>
 
                     <!--  Menu Items  -->
-                    <StackLayout Grid.Row="1" Padding="0" Spacing="0">
+                    <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto">
                         <!--  Main  -->
-                        <Button Padding="20" BackgroundColor="Transparent"
+                        <Button Grid.Row="0" Padding="20" BackgroundColor="Transparent"
                                 Command="{Binding NavigateToHomeCommand}"
-                                FontSize="16" HorizontalOptions="FillAndExpand"
+                                FontSize="16"
                                 Text="{x:Static res:Languages.Home}"
                                 TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                                             Dark={StaticResource LightOnDarkBackground}}" />
 
                         <!--  Bookmarks  -->
-                        <Button Padding="20" BackgroundColor="Transparent"
+                        <Button Grid.Row="1" Padding="20" BackgroundColor="Transparent"
                                 Command="{Binding NavigateToBookmarksCommand}"
-                                FontSize="16" HorizontalOptions="FillAndExpand"
+                                FontSize="16"
                                 Text="{x:Static res:Languages.Bookmarks}"
                                 TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                                             Dark={StaticResource LightOnDarkBackground}}" />
 
                         <!--  Settings  -->
-                        <Button Padding="20" BackgroundColor="Transparent"
+                        <Button Grid.Row="2" Padding="20" BackgroundColor="Transparent"
                                 Command="{Binding NavigateToSettingsCommand}"
-                                FontSize="16" HorizontalOptions="FillAndExpand"
+                                FontSize="16"
                                 Text="{x:Static res:Languages.Settings}"
                                 TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                                             Dark={StaticResource LightOnDarkBackground}}" />
-                    </StackLayout>
+                    </Grid>
                 </Grid>
-            </Frame>
+            </Border>
         </Grid>
     </Grid>
 
