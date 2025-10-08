@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid x:Class="randomkiwi.Views.RandomWikipediaView"
+      xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:controls="clr-namespace:randomkiwi.Views.Controls"
+      xmlns:progressBar="clr-namespace:Syncfusion.Maui.Toolkit.ProgressBar;assembly=Syncfusion.Maui.Toolkit"
+      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+      xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
+      x:Name="MainPage"
+      x:DataType="viewModels:RandomWikipediaViewModel"
+      BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                        Dark={StaticResource OffBlack}}"
+      ColumnDefinitions="*"
+      RowDefinitions="*,Auto">
+
+    <!--  Web View  -->
+    <ContentView Grid.Row="0" Grid.Column="0" IsVisible="{Binding IsLoaded}">
+        <controls:WikipediaWebView BindingContext="{Binding WebViewViewModel}" />
+    </ContentView>
+
+    <!--  Error messages  -->
+    <Label Grid.Row="0" Grid.Column="0" HorizontalOptions="Center"
+           IsVisible="{Binding IsInError}"
+           Text="Some error occured"
+           TextColor="{StaticResource Red}"
+           VerticalOptions="Center" />
+
+    <!--  Loading  -->
+    <progressBar:SfCircularProgressBar Grid.Row="0" Grid.Column="0"
+                                       Background="{AppThemeBinding Light={StaticResource White},
+                                                                    Dark={StaticResource OffBlack}}"
+                                       IsIndeterminate="True"
+                                       IsVisible="{Binding IsLoading}"
+                                       ProgressFill="{StaticResource Kiwi}"
+                                       WidthRequest="100" />
+
+    <!--  Task bar  -->
+    <HorizontalStackLayout Grid.Row="1" Grid.Column="0" HeightRequest="70"
+                           HorizontalOptions="Center">
+        <ImageButton Margin="20,0" Aspect="Center"
+                     Command="{Binding PreviousArticleCommand}"
+                     HeightRequest="44" HorizontalOptions="End"
+                     Source="{StaticResource IconGoBack}"
+                     VerticalOptions="Center" WidthRequest="44" />
+
+        <ImageButton Margin="20,0" Aspect="Center"
+                     Command="{Binding NextArticleCommand}"
+                     HeightRequest="44" HorizontalOptions="End"
+                     Source="{StaticResource IconRefresh}"
+                     VerticalOptions="Center" WidthRequest="44" />
+
+        <ImageButton Margin="20,0" Aspect="Center"
+                     Command="{Binding AddBookmarkCommand}"
+                     HeightRequest="44" HorizontalOptions="End"
+                     Source="{StaticResource IconBookmark}"
+                     VerticalOptions="Center" WidthRequest="44" />
+
+    </HorizontalStackLayout>
+</Grid>

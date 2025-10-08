@@ -5,14 +5,11 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-
     }
 
     protected override void OnStart()
     {
         base.OnStart();
-
-
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -23,8 +20,9 @@ public partial class App : Application
         IWikipediaAPIClient? httpService = Handler?.MauiContext?.Services.GetRequiredService<IWikipediaAPIClient>();
         httpService?.Initialize();
 
-        AppShell appShell = new();
-        return new Window(appShell)
+        MainView view = Handler?.MauiContext?.Services.GetRequiredService<MainView>() ?? throw new InvalidOperationException("MainHostPage not found in DI container");
+
+        return new Window(view)
         {
 #if DEBUG && WINDOWS
             Height = 640,

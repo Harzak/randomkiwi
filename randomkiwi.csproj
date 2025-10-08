@@ -83,13 +83,16 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <Compile Update="Views\MainView.xaml.cs">
+	    <DependentUpon>MainView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Resources\Languages.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>Languages.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\MainView.xaml.cs">
-	    <DependentUpon>MainView.xaml</DependentUpon>
+	  <Compile Update="Views\RandomWikipediaView.xaml.cs">
+	    <DependentUpon>RandomWikipediaView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	
@@ -101,6 +104,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <MauiXaml Update="Views\MainView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Controls\WikipediaWebView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

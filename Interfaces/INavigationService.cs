@@ -30,6 +30,11 @@ public interface INavigationService : IDisposable
     event EventHandler<EventArgs>? CurrentViewModelChanged;
 
     /// <summary>
+    /// Asynchronously initializes the navigation service with the specified host view model.
+    /// </summary>
+    Task InitializeAsync(IHostViewModel host);
+
+    /// <summary>
     /// Navigates to the home page and clears the navigation stack.
     /// </summary>
     Task NavigateToHomeAsync(NavigationParameters? parameters = null);

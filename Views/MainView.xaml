@@ -1,59 +1,102 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="randomkiwi.Views.MainView"
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="randomkiwi.MainView"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:randomkiwi.Views.Controls"
-             xmlns:progressBar="clr-namespace:Syncfusion.Maui.Toolkit.ProgressBar;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:constants="clr-namespace:randomkiwi.Constants"
+             xmlns:res="clr-namespace:randomkiwi.Resources"
              xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
+             xmlns:views="clr-namespace:randomkiwi.Views"
              x:Name="MainPage"
-             x:DataType="viewModels:MainViewModel">
+             Title="{Binding {x:Static constants:AppConsts.APP_NAME}}"
+             x:DataType="viewModels:MainViewModel"
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
+                                               Dark={StaticResource DarkBackground}}">
 
-    <Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
+    <Grid>
+        <!--  Main Content Area  -->
+        <Grid RowDefinitions="Auto,*">
+            <!--  Title Bar  -->
+            <Grid Grid.Row="0" Padding="8,0"
+                  BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                                    Dark={StaticResource OffBlack}}"
+                  ColumnDefinitions="Auto,*,Auto" HeightRequest="56">
 
-        <!--  Web View  -->
-        <ContentView Grid.Row="0" Grid.Column="0" IsVisible="{Binding IsLoaded}">
-            <controls:WikipediaWebView BindingContext="{Binding WebViewViewModel}" />
-        </ContentView>
+                <!--  Hamburger Menu Button  -->
+                <ImageButton Grid.Column="0" Aspect="Center"
+                             Command="{Binding ToggleFlyoutCommand}"
+                             HeightRequest="44" HorizontalOptions="Start"
+                             Source="{StaticResource IconHamburger}"
+                             VerticalOptions="Center" WidthRequest="44" />
 
-        <!--  Error messages  -->
-        <Label Grid.Row="0" Grid.Column="0" HorizontalOptions="Center"
-               IsVisible="{Binding IsInError}"
-               Text="Some error occured"
-               TextColor="{StaticResource Red}"
-               VerticalOptions="Center" />
+                <!--  Logo  -->
+                <Image Grid.Column="1" Aspect="AspectFit" Background="Transparent"
+                       HeightRequest="30" HorizontalOptions="Center" Source="logo.png"
+                       VerticalOptions="Center" />
 
-        <!--  Loading  -->
-        <progressBar:SfCircularProgressBar Grid.Row="0" Grid.Column="0"
-                                           Background="{AppThemeBinding Light={StaticResource White},
-                                                                        Dark={StaticResource OffBlack}}"
-                                           IsIndeterminate="True"
-                                           IsVisible="{Binding IsLoading}"
-                                           ProgressFill="{StaticResource Kiwi}"
-                                           WidthRequest="100" />
+                <!--  More Button  -->
+                <ImageButton Grid.Column="2" Aspect="Center" HeightRequest="44"
+                             HorizontalOptions="End"
+                             Source="{StaticResource IconMore}"
+                             VerticalOptions="Center" WidthRequest="44" />
+            </Grid>
 
-        <!--  Task bar  -->
-        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" HeightRequest="70"
-                               HorizontalOptions="Center">
-            <ImageButton Margin="20,0" Aspect="Center"
-                         Command="{Binding PreviousArticleCommand}"
-                         HeightRequest="44" HorizontalOptions="End"
-                         Source="{StaticResource IconGoBack}"
-                         VerticalOptions="Center" WidthRequest="44" />
+            <!--  Main Content  -->
+            <ContentView x:Name="ContentArea" Grid.Row="1" />
+        </Grid>
 
-            <ImageButton Margin="20,0" Aspect="Center"
-                         Command="{Binding NextArticleCommand}"
-                         HeightRequest="44" HorizontalOptions="End"
-                         Source="{StaticResource IconRefresh}"
-                         VerticalOptions="Center" WidthRequest="44" />
+        <!--  Flyout Menu Overlay  -->
+        <Grid IsVisible="{Binding IsFlyoutPresented}">
+            <!--  Background overlay  -->
+            <BoxView BackgroundColor="Black" Opacity="0.5">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CloseFlyoutCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
 
-            <ImageButton Margin="20,0" Aspect="Center"
-                         Command="{Binding AddBookmarkCommand}"
-                         HeightRequest="44" HorizontalOptions="End"
-                         Source="{StaticResource IconBookmark}"
-                         VerticalOptions="Center" WidthRequest="44" />
+            <!--  Flyout Panel  -->
+            <Frame Padding="0"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
+                                                     Dark={StaticResource DarkBackground}}"
+                   CornerRadius="0" HasShadow="True" HorizontalOptions="Start"
+                   VerticalOptions="FillAndExpand" WidthRequest="230">
 
-        </HorizontalStackLayout>
+                <Grid RowDefinitions="Auto,*">
+                    <!--  Flyout Header  -->
+                    <Grid Grid.Row="0" HeightRequest="80">
+                        <!--  Logo  -->
+                        <Image Aspect="AspectFit" Background="Transparent" HeightRequest="40"
+                               HorizontalOptions="Center" Source="logo.png" VerticalOptions="Center" />
+                    </Grid>
+
+                    <!--  Menu Items  -->
+                    <StackLayout Grid.Row="1" Padding="0" Spacing="0">
+                        <!--  Main  -->
+                        <Button Padding="20" BackgroundColor="Transparent"
+                                Command="{Binding NavigateToHomeCommand}"
+                                FontSize="16" HorizontalOptions="FillAndExpand"
+                                Text="{x:Static res:Languages.Home}"
+                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                                            Dark={StaticResource LightOnDarkBackground}}" />
+
+                        <!--  Bookmarks  -->
+                        <Button Padding="20" BackgroundColor="Transparent"
+                                Command="{Binding NavigateToBookmarksCommand}"
+                                FontSize="16" HorizontalOptions="FillAndExpand"
+                                Text="{x:Static res:Languages.Bookmarks}"
+                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                                            Dark={StaticResource LightOnDarkBackground}}" />
+
+                        <!--  Settings  -->
+                        <Button Padding="20" BackgroundColor="Transparent"
+                                Command="{Binding NavigateToSettingsCommand}"
+                                FontSize="16" HorizontalOptions="FillAndExpand"
+                                Text="{x:Static res:Languages.Settings}"
+                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                                            Dark={StaticResource LightOnDarkBackground}}" />
+                    </StackLayout>
+                </Grid>
+            </Frame>
+        </Grid>
     </Grid>
 
 </ContentPage>

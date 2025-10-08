@@ -1,10 +1,9 @@
 namespace randomkiwi.Views;
 
-public partial class BookmarksView : ContentPage
+public partial class BookmarksView : Grid
 {
-    public BookmarksView(BookmarksViewModel viewModel)
+    public BookmarksView()
     {
         InitializeComponent();
-        BindingContext = viewModel;
     }
 }

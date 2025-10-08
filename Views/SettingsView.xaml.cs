@@ -2,24 +2,21 @@ using System.Globalization;
 
 namespace randomkiwi.Views;
 
-public partial class SettingsView : ContentPage
+public partial class SettingsView : Grid
 {
-    private readonly SettingsViewModel _viewModel;
-
-    public SettingsView(SettingsViewModel viewModel)
+    public SettingsView()
     {
         InitializeComponent();
-        BindingContext = viewModel;
-        _viewModel = viewModel;
     }
 
     private void SelecteduCultureIndexChanged(object sender, EventArgs e)
     {
         if (sender is Picker picker
             && picker.SelectedItem is CultureInfo culture
-            && picker.IsLoaded)
+            && picker.IsLoaded
+            && BindingContext is SettingsViewModel viewModel)
         {
-            _viewModel?.OnSelectedCultureChanged();
+            viewModel.OnSelectedCultureChanged();
         }
     }
 }

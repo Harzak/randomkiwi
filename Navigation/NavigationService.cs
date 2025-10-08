@@ -30,9 +30,16 @@ public sealed class NavigationService : INavigationService
     }
 
     /// <inheritdoc/>
+    public async Task InitializeAsync(IHostViewModel host)
+    {
+        ArgumentNullException.ThrowIfNull(host);
+        await _handler.InitializeAsync(host).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
     public async Task NavigateToHomeAsync(NavigationParameters? parameters = null)
     {
-        IRoutableViewModel homeViewModel = _viewModelProvider.GetRequiredService<MainViewModel>();
+        IRoutableViewModel homeViewModel = _viewModelProvider.GetRequiredService<RandomWikipediaViewModel>();
         await _handler.ClearAsync().ConfigureAwait(false);
         await NavigateToAsync(homeViewModel).ConfigureAwait(false);
     }

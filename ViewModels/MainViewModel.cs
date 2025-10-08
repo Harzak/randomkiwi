@@ -1,108 +1,94 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using randomkiwi.Events;
-using randomkiwi.Utilities.Results;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class MainViewModel : BaseRoutableViewModel
+/// <summary>
+/// Host view model that manages the main navigation and flyout menu
+/// </summary>
+public sealed partial class MainViewModel : ObservableObject, IHostViewModel
 {
-    private readonly IArticleCatalog _articleCatalog;
-    private readonly ILoadingService _loadingService;
-
-    public override string Name => nameof(MainViewModel);
-    public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
-    public bool IsLoaded => !this.IsLoading && !this.IsInError;
+    private readonly INavigationService _navigationService;
+    private readonly IServiceProvider _serviceProvider;
 
     [ObservableProperty]
-    private WikipediaWebViewViewModel _webViewViewModel;
+    private IRoutableViewModel? _currentViewModel;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLoaded))]
-    [NotifyPropertyChangedFor(nameof(IsInError))]
-    private bool _isLoading;
+    private bool _isBusy;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLoaded))]
-    [NotifyPropertyChangedFor(nameof(IsInError))]
-    private string? _errorMessage;
+    private bool _isFlyoutPresented;
 
-    public MainViewModel(
-        WikipediaWebViewViewModel webViewViewModel,
-        IArticleCatalog articleCatalog,
-        ILoadingService loadingService,
-        INavigationService navigationService)
-    : base(navigationService)
+    public MainViewModel(IServiceProvider serviceProvider, INavigationService navigationService)
     {
-        _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
-        _articleCatalog = articleCatalog ?? throw new ArgumentNullException(nameof(articleCatalog));
-        _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-        _loadingService.IsLoadingChanged += OnIsLoadingChanged;
+        _navigationService.CurrentViewModelChanged += OnCurrentViewModelChanged;
     }
 
+    /// <summary>
+    /// Initialize the host view model with the navigation service and navigate to the main view
+    /// </summary>
     public async Task InitializeAsync()
     {
-        await this.ExecuteWithLoadingAsync(_articleCatalog.InitializeAsync).ConfigureAwait(false);
+        await _navigationService.InitializeAsync(this).ConfigureAwait(false);
+        await NavigateToHomeAsync().ConfigureAwait(false);
     }
 
     [RelayCommand]
-    private async Task PreviousArticle()
+    private async Task NavigateToHomeAsync()
     {
-        await this.ExecuteWithLoadingAsync(() => Task.FromResult(_articleCatalog.Previous())).ConfigureAwait(false);
+        IRoutableViewModel mainViewModel = _serviceProvider.GetRequiredService<RandomWikipediaViewModel>();
+        await _navigationService.NavigateToAsync(mainViewModel).ConfigureAwait(false);
+        IsFlyoutPresented = false;
     }
 
     [RelayCommand]
-    private async Task NextArticle()
+    private async Task NavigateToBookmarksAsync()
     {
-        await this.ExecuteWithLoadingAsync(_articleCatalog.NextAsync).ConfigureAwait(false);
+        IRoutableViewModel bookmarksViewModel = _serviceProvider.GetRequiredService<BookmarksViewModel>();
+        await _navigationService.NavigateToAsync(bookmarksViewModel).ConfigureAwait(false);
+        IsFlyoutPresented = false;
     }
 
     [RelayCommand]
-    private async Task AddBookmark()
+    private async Task NavigateToSettingsAsync()
     {
-        await this.ExecuteWithLoadingAsync(_articleCatalog.BookmarkAsync).ConfigureAwait(false);
+        IRoutableViewModel settingsViewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
+        await _navigationService.NavigateToAsync(settingsViewModel).ConfigureAwait(false);
+        IsFlyoutPresented = false;
     }
 
-    private async Task ExecuteWithLoadingAsync(Func<Task<OperationResult>> operation)
+    [RelayCommand]
+    private void ToggleFlyout()
     {
-        this.ErrorMessage = null;
-        using IDisposable loadingToken = _loadingService.BeginLoading();
-
-        OperationResult result = await operation().ConfigureAwait(false);
-        this.HandleResult(result);
+        IsFlyoutPresented = !IsFlyoutPresented;
     }
 
-    private void HandleResult(OperationResult result)
+    [RelayCommand]
+    private void CloseFlyout()
     {
-        if (result.IsSuccess && _articleCatalog.Current?.Url != null)
-        {
-            this.WebViewViewModel.NavigateToUrl(_articleCatalog.Current.Url);
-        }
-        else
-        {
-            this.ErrorMessage = string.IsNullOrWhiteSpace(result.ErrorMessage) ? "Unknown error." : result.ErrorMessage;
-        }
+        IsFlyoutPresented = false;
     }
 
-    private void OnIsLoadingChanged(object? sender, LoadingChangedEventArgs e)
+    private void OnCurrentViewModelChanged(object? sender, EventArgs e)
     {
-        this.IsLoading = e.IsLoading;
+        CurrentViewModel = _navigationService.CurrentViewModel;  
     }
 
     private bool _disposed;
-    protected override void Dispose(bool disposing)
+    public void Dispose()
     {
-        if (disposing && !_disposed)
+        if (!_disposed)
         {
             _disposed = true;
-
-            if (_loadingService != null)
+            if (_navigationService != null)
             {
-                _loadingService.IsLoadingChanged -= OnIsLoadingChanged;
+                _navigationService.CurrentViewModelChanged -= OnCurrentViewModelChanged;
+                _navigationService.Dispose();
             }
-            _articleCatalog?.Dispose();
         }
-        base.Dispose(disposing);
     }
 }

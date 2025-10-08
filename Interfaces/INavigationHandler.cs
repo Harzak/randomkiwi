@@ -16,6 +16,11 @@ public interface INavigationHandler : IDisposable
     public bool CanPop { get; }
 
     /// <summary>
+    /// Asynchronously initializes the navigation handler with the specified host view model.
+    /// </summary>
+    Task InitializeAsync(IHostViewModel host);
+
+    /// <summary>
     /// Asynchronously clears all items from the navigation stack.
     /// </summary>
     Task ClearAsync();

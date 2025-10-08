@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="randomkiwi.Views.BookmarksView"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:pullToRefreshControl="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:res="clr-namespace:randomkiwi.Resources"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
-             Title="BookmarksView"
-             x:DataType="viewModels:BookmarksViewModel">
+<Grid x:Class="randomkiwi.Views.BookmarksView"
+      xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:pullToRefreshControl="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
+      xmlns:res="clr-namespace:randomkiwi.Resources"
+      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+      xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
+      x:DataType="viewModels:BookmarksViewModel">
 
     <pullToRefreshControl:SfPullToRefresh x:Name="pullToRefresh" TransitionMode="Push">
         <pullToRefreshControl:SfPullToRefresh.PullableContent>
@@ -49,7 +48,7 @@
                                         <ImageButton Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
                                                      Margin="5,0"
                                                      Aspect="Center"
-                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenBookmarkCommand}"
+                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=BindingContext.OpenBookmarkCommand}"
                                                      CommandParameter="{Binding .}"
                                                      HeightRequest="44" HorizontalOptions="End"
                                                      Source="{StaticResource IconView}"
@@ -73,4 +72,4 @@
             </Grid>
         </pullToRefreshControl:SfPullToRefresh.PullableContent>
     </pullToRefreshControl:SfPullToRefresh>
-</ContentPage>
+</Grid>

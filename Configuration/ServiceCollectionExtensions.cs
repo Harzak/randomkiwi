@@ -23,11 +23,17 @@ public static class ServiceCollectionExtensions
     {
         collection.AddHttpClient();
 
+        // Views
+        collection.AddSingleton<MainView>();
+
         // ViewModels
         collection.AddSingleton<MainViewModel>();
+        collection.AddSingleton<IHostViewModel>(provider => provider.GetRequiredService<MainViewModel>());
+        collection.AddSingleton<RandomWikipediaViewModel>();
         collection.AddSingleton<SettingsViewModel>();
         collection.AddSingleton<BookmarksViewModel>();
         collection.AddTransient<WikipediaWebViewViewModel>();
+
 
         // Services
         collection.AddSingleton<IArticleCatalog, WikipediaArticleCatalog>();
@@ -38,7 +44,8 @@ public static class ServiceCollectionExtensions
         collection.AddTransient<IWebViewManager, WebViewManager>();
         collection.AddSingleton<IScriptLoader, ScriptLoader>();
         collection.AddSingleton<IUserPreferenceRepository, UserPreferenceRepository>();
-
+        collection.AddSingleton<INavigationHandler, NavigationHandler>();
+        collection.AddSingleton<INavigationService, NavigationService>();
         collection.AddSingleton<IJsonStorage<UserPreferenceModel>>(provider =>
         {
             var logger = provider.GetRequiredService<ILogger<JsonStorage<UserPreferenceModel>>>();
@@ -46,7 +53,6 @@ public static class ServiceCollectionExtensions
             string appDirectory = Path.Combine(appDataPath, AppConsts.APP_NAME);
             return new JsonStorage<UserPreferenceModel>(appDirectory, AppConsts.USER_PREFERENCES_FILE, logger);
         });
-
         collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         collection.AddSingleton<IAppConfiguration, AppConfiguration>();
         collection.AddSingleton<ILoadingService>(serviceProvider =>

@@ -79,4 +79,11 @@
                      Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                              Dark={StaticResource LightOnDarkBackground}}" />
 
+    <FontImageSource x:Key="IconHamburger"
+                     FontFamily="{x:Static f:FluentUI.FontFamily}"
+                     Glyph="{x:Static f:FluentUI.line_horizontal_3_20_regular}"
+                     Size="{StaticResource size240}"
+                     Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                             Dark={StaticResource LightOnDarkBackground}}" />
+
 </ResourceDictionary>

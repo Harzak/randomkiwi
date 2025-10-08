@@ -10,7 +10,7 @@ internal sealed class NavigationHandler : INavigationHandler
 {
     private readonly ILogger _logger;
     private readonly IEnumerable<INavigationGuard> _navigationGuards;
-    private readonly IHostViewModel _host;
+    private IHostViewModel? _host;
     private readonly Timer _cleanupTimer;
     private readonly NavigationStack _stack;
 
@@ -23,9 +23,8 @@ internal sealed class NavigationHandler : INavigationHandler
     /// <inheritdoc/>
     public bool CanPop => _stack.Items.Count > 1;
 
-    public NavigationHandler(IHostViewModel host, ILogger<NavigationHandler> logger)
+    public NavigationHandler(ILogger<NavigationHandler> logger)
     {
-        _host = host ?? throw new ArgumentNullException(nameof(host));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _stack = new();
         _navigationGuards = [new CalculationInProgressGuard()];
@@ -33,6 +32,13 @@ internal sealed class NavigationHandler : INavigationHandler
                                   state: null,
                                   dueTime: (int)TimeSpan.FromMinutes(2).TotalMilliseconds,
                                   period: (int)TimeSpan.FromMinutes(2).TotalMilliseconds);
+    }
+
+    /// <inheritdoc/>
+    public Task InitializeAsync(IHostViewModel host)
+    {
+        _host = host ?? throw new ArgumentNullException(nameof(host));
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
@@ -45,6 +51,11 @@ internal sealed class NavigationHandler : INavigationHandler
     /// <inheritdoc/>
     public async Task PushAsync(IRoutableViewModel viewModel, NavigationContext context)
     {
+        if (_host == null)
+        {
+            throw new InvalidOperationException("NavigationHandler is not initialized. Call InitializeAsync with a valid IHostViewModel before using.");
+        }
+
         _host.IsBusy = true;
 
         foreach (INavigationGuard guard in _navigationGuards)
