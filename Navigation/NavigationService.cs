@@ -6,24 +6,6 @@ using System.Threading.Tasks;
 
 namespace randomkiwi.Navigation;
 
-public interface INavigationService : IDisposable
-{
-    public IRoutableViewModel? CurrentViewModel { get; }
-    public bool CanNavigateBackViewModel { get; }
-
-    public string? CurrentWebUrl { get; }
-    public bool CanNavigateBackWeb { get; }
-
-    public event EventHandler<EventArgs>? CurrentViewModelChanged;
-    public event EventHandler<EventArgs>? CurrentWebUrlChanged;
-
-    Task InitializeAsync(IHostViewModel host);
-
-    Task NavigateToAsync(IRoutableViewModel viewModel, NavigationParameters? parameters = null);
-    Task NavigateToAsync(Uri url, NavigationParameters? parameters = null);
-    Task NavigateBackAsync(NavigationParameters? parameters = null);
-}
-
 /// <summary>
 /// Unified navigation service that coordinates ViewModel and Web navigation
 /// </summary>
@@ -33,13 +15,12 @@ internal sealed class NavigationService : INavigationService
     private readonly IWebPageNavigationService _webNavigation;
 
     public IRoutableViewModel? CurrentViewModel => _viewModelNavigation.CurrentViewModel;
-    public bool CanNavigateBackViewModel => _viewModelNavigation.CanNavigateBack;
-
-    public string? CurrentWebUrl => _webNavigation.CurrentPage?.UrlPath;
-    public bool CanNavigateBackWeb => _webNavigation.CanNavigateBack;
+    public IRoutableItem? CurrentPage => _webNavigation.CurrentPage;
+    public bool CanNavigateBackViewModel => _viewModelNavigation.CanNavigateBackViewModel;
+    public bool CanNavigateBackPage => _webNavigation.CanNavigateBackPage;
 
     public event EventHandler<EventArgs>? CurrentViewModelChanged;
-    public event EventHandler<EventArgs>? CurrentWebUrlChanged;
+    public event EventHandler<EventArgs>? CurrentPageChanged;
 
     public NavigationService(
         IViewModelNavigationService viewModelNavigation,
@@ -49,13 +30,7 @@ internal sealed class NavigationService : INavigationService
         _webNavigation = webNavigation ?? throw new ArgumentNullException(nameof(webNavigation));
 
         _viewModelNavigation.CurrentViewModelChanged += OnCurrentViewModelChanged;
-        _webNavigation.CurrentPageChanged += OnCurrentWebPageChanged;
-    }
-
-    public async Task InitializeAsync(IHostViewModel host)
-    {
-        await _viewModelNavigation.InitializeAsync(host).ConfigureAwait(false);
-        await _webNavigation.InitializeAsync(host).ConfigureAwait(false);
+        _webNavigation.CurrentPageChanged += OnCurrentPageChanged;
     }
 
     public async Task NavigateToAsync(IRoutableViewModel viewModel, NavigationParameters? parameters = null)
@@ -68,14 +43,13 @@ internal sealed class NavigationService : INavigationService
         await _webNavigation.NavigateToAsync(url, parameters).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Smart navigation that prioritizes web navigation when in web-enabled ViewModels
-    /// </summary>
+
+    /// <inheritdoc/>
     public async Task NavigateBackAsync(NavigationParameters? parameters = null)
     {
-        if (CurrentViewModel is RandomWikipediaViewModel && CanNavigateBackWeb)
+        if (CurrentViewModel is RandomWikipediaViewModel && CanNavigateBackPage)
         {
-            await NavigateBackWebAsync(parameters).ConfigureAwait(false);
+            await NavigateBackPageAsync(parameters).ConfigureAwait(false);
         }
         else if (CanNavigateBackViewModel)
         {
@@ -83,14 +57,14 @@ internal sealed class NavigationService : INavigationService
         }
     }
 
-    private async Task NavigateBackViewModelAsync(NavigationParameters? parameters = null)
+    public async Task NavigateBackViewModelAsync(NavigationParameters? parameters = null)
     {
-        await _viewModelNavigation.NavigateBackAsync(parameters).ConfigureAwait(false);
+        await _viewModelNavigation.NavigateBackViewModelAsync(parameters).ConfigureAwait(false);
     }
 
-    private async Task NavigateBackWebAsync(NavigationParameters? parameters = null)
+    public async Task NavigateBackPageAsync(NavigationParameters? parameters = null)
     {
-        await _webNavigation.NavigateBackAsync(parameters).ConfigureAwait(false);
+        await _webNavigation.NavigateBackPageAsync(parameters).ConfigureAwait(false);
     }
 
     private void OnCurrentViewModelChanged(object? sender, EventArgs e)
@@ -98,9 +72,9 @@ internal sealed class NavigationService : INavigationService
         CurrentViewModelChanged?.Invoke(this, e);
     }
 
-    private void OnCurrentWebPageChanged(object? sender, EventArgs e)
+    private void OnCurrentPageChanged(object? sender, EventArgs e)
     {
-        CurrentWebUrlChanged?.Invoke(this, e);
+        CurrentPageChanged?.Invoke(this, e);
     }
 
     public void Dispose()
@@ -113,7 +87,7 @@ internal sealed class NavigationService : INavigationService
 
         if (_webNavigation != null)
         {
-            _webNavigation.CurrentPageChanged -= OnCurrentWebPageChanged;
+            _webNavigation.CurrentPageChanged -= OnCurrentPageChanged;
             _webNavigation.Dispose();
         }
     }

@@ -6,38 +6,21 @@
 public sealed class ViewModelNavigationService : IViewModelNavigationService
 {
     private readonly INavigationHandler<IRoutableViewModel> _handler;
-    private readonly IServiceProvider _viewModelProvider;
 
     /// <inheritdoc/>
     public IRoutableViewModel? CurrentViewModel => _handler.ActiveItem;
 
     /// <inheritdoc/>
-    public bool CanNavigateBack => _handler.CanPop;
+    public bool CanNavigateBackViewModel => _handler.CanPop;
 
     /// <inheritdoc/>
     public event EventHandler<EventArgs>? CurrentViewModelChanged;
 
-    public ViewModelNavigationService(INavigationHandler<IRoutableViewModel> handler, IServiceProvider viewModelProvider)
+    public ViewModelNavigationService(INavigationHandler<IRoutableViewModel> handler)
     {
         _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-        _viewModelProvider = viewModelProvider ?? throw new ArgumentNullException(nameof(viewModelProvider));
 
         _handler.ActiveItemChanged += OnActiveViewModelChanged;
-    }
-
-    /// <inheritdoc/>
-    public async Task InitializeAsync(IHostViewModel host)
-    {
-        ArgumentNullException.ThrowIfNull(host);
-        await _handler.InitializeAsync(host).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc/>
-    public async Task NavigateToHomeAsync(NavigationParameters? parameters = null)
-    {
-        IRoutableViewModel homeViewModel = _viewModelProvider.GetRequiredService<RandomWikipediaViewModel>();
-        await _handler.ClearAsync().ConfigureAwait(false);
-        await NavigateToAsync(homeViewModel).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -50,9 +33,9 @@ public sealed class ViewModelNavigationService : IViewModelNavigationService
     }
 
     /// <inheritdoc/>
-    public async Task NavigateBackAsync(NavigationParameters? parameters = null)
+    public async Task NavigateBackViewModelAsync(NavigationParameters? parameters = null)
     {
-        if (!CanNavigateBack)
+        if (!CanNavigateBackViewModel)
         {
             return;
         }

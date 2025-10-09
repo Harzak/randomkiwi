@@ -11,39 +11,20 @@ namespace randomkiwi.ViewModels;
 public sealed partial class WikipediaWebViewViewModel : ObservableObject, IDisposable
 {
     private readonly IWebViewManager _webViewManager;
-    private readonly IWebPageNavigationService _webNavigation;
+    private readonly INavigationService _navigation;
 
     [ObservableProperty]
     private View? _webView;
 
-    public bool CanGoBack => _webNavigation.CanNavigateBack;
+    public bool CanGoBack => _navigation.CanNavigateBackPage;
 
-    public WikipediaWebViewViewModel(IWebViewManager webViewManager, IWebPageNavigationService webNavigation)
+    public WikipediaWebViewViewModel(IWebViewManager webViewManager, INavigationService navigation)
     {
         _webViewManager = webViewManager;
-        _webNavigation = webNavigation;
+        _navigation = navigation;
 
-        _webNavigation.CurrentPageChanged += OnCurrentPageChanged;
+        _navigation.CurrentPageChanged += OnCurrentPageChanged;
         _webViewManager.UserNavigated += OnUserNavigated;
-    }
-
-    private async void OnCurrentPageChanged(object? sender, EventArgs e)
-    {
-        if (Uri.TryCreate(_webNavigation.CurrentPage?.UrlPath, UriKind.Absolute, out Uri? uri) && uri != null)
-        {
-            await MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                _webViewManager.Source = uri;
-            }).ConfigureAwait(false);
-        }
-    }
-
-    private async void OnUserNavigated(object? sender, WebNavigatedEventArgs e)
-    {
-        if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri? uri) && uri != null)
-        {
-            await _webNavigation.NavigateToAsync(uri).ConfigureAwait(false);
-        }
     }
 
     public async Task InitializeAsync()
@@ -53,18 +34,32 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject, IDispo
 
     public async Task NavigateToUrlAsync(Uri uri)
     {
-        await _webNavigation.NavigateToAsync(uri).ConfigureAwait(false);
+        await _navigation.NavigateToAsync(uri).ConfigureAwait(false);
     }
 
-    [RelayCommand(CanExecute = nameof(CanGoBack))]
-    public async Task GoBack()
+    private async void OnCurrentPageChanged(object? sender, EventArgs e)
     {
-        await _webNavigation.NavigateBackAsync().ConfigureAwait(false);
+        if (Uri.TryCreate(_navigation.CurrentPage?.UrlPath, UriKind.Absolute, out Uri? uri) && uri != null)
+        {
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                _webViewManager.Source = uri;
+            })
+            .ConfigureAwait(false);
+        }
+    }
+
+    private async void OnUserNavigated(object? sender, WebNavigatedEventArgs e)
+    {
+        if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri? uri) && uri != null)
+        {
+            await _navigation.NavigateToAsync(uri).ConfigureAwait(false);
+        }
     }
 
     public void Dispose()
     {
-        _webNavigation.CurrentPageChanged -= OnCurrentPageChanged;
+        _navigation.CurrentPageChanged -= OnCurrentPageChanged;
         _webViewManager.UserNavigated -= OnUserNavigated;
         _webViewManager?.Dispose();
     }

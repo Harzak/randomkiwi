@@ -6,16 +6,13 @@ namespace randomkiwi.ViewModels;
 /// <summary>
 /// Host view model that manages the main navigation and flyout menu
 /// </summary>
-public sealed partial class MainViewModel : ObservableObject, IHostViewModel
+public sealed partial class MainViewModel : ObservableObject
 {
     private readonly INavigationService _navigationService;
     private readonly IServiceProvider _serviceProvider;
 
     [ObservableProperty]
     private IRoutableViewModel? _currentViewModel;
-
-    [ObservableProperty]
-    private bool _isBusy;
 
     [ObservableProperty]
     private bool _isFlyoutPresented;
@@ -33,7 +30,6 @@ public sealed partial class MainViewModel : ObservableObject, IHostViewModel
     /// </summary>
     public async Task InitializeAsync()
     {
-        await _navigationService.InitializeAsync(this).ConfigureAwait(false);
         await NavigateToHomeAsync().ConfigureAwait(false);
     }
 
@@ -71,13 +67,6 @@ public sealed partial class MainViewModel : ObservableObject, IHostViewModel
     private void CloseFlyout()
     {
         IsFlyoutPresented = false;
-    }
-
-
-    [RelayCommand]
-    private async Task TestPrevious()
-    {
-        await _navigationService.NavigateBackAsync().ConfigureAwait(false);
     }
 
     private void OnCurrentViewModelChanged(object? sender, EventArgs e)

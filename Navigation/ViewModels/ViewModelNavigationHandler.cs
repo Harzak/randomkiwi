@@ -11,7 +11,6 @@ internal sealed class ViewModelNavigationHandler : INavigationHandler<IRoutableV
 {
     private readonly ILogger _logger;
     private readonly IEnumerable<INavigationGuard> _navigationGuards;
-    private IHostViewModel? _host;
     private readonly Timer _cleanupTimer;
     private readonly NavigationStack<IRoutableViewModel> _stack;
 
@@ -36,13 +35,6 @@ internal sealed class ViewModelNavigationHandler : INavigationHandler<IRoutableV
     }
 
     /// <inheritdoc/>
-    public Task InitializeAsync(IHostViewModel host)
-    {
-        _host = host ?? throw new ArgumentNullException(nameof(host));
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc/>
     public async Task ClearAsync()
     {
         _stack.Clear();
@@ -52,13 +44,6 @@ internal sealed class ViewModelNavigationHandler : INavigationHandler<IRoutableV
     /// <inheritdoc/>
     public async Task PushAsync(IRoutableViewModel viewModel, NavigationContext context)
     {
-        if (_host == null)
-        {
-            throw new InvalidOperationException("NavigationHandler is not initialized. Call InitializeAsync with a valid IHostViewModel before using.");
-        }
-
-        _host.IsBusy = true;
-
         foreach (INavigationGuard guard in _navigationGuards)
         {
             NavigationGuardResult result = await guard.CanNavigateAsync(ActiveItem, viewModel, context).ConfigureAwait(false);
@@ -73,7 +58,6 @@ internal sealed class ViewModelNavigationHandler : INavigationHandler<IRoutableV
         _stack.Push(viewModel);
         await viewModel.OnInitializedAsync().ConfigureAwait(false);
 
-        _host.IsBusy = false;
         ActiveItemChanged?.Invoke(this, EventArgs.Empty);
     }
 

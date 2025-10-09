@@ -30,7 +30,6 @@ public static class ServiceCollectionExtensions
 
         // ViewModels
         collection.AddSingleton<MainViewModel>();
-        collection.AddSingleton<IHostViewModel>(provider => provider.GetRequiredService<MainViewModel>());
         collection.AddSingleton<RandomWikipediaViewModel>();
         collection.AddSingleton<SettingsViewModel>();
         collection.AddSingleton<BookmarksViewModel>();

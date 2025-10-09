@@ -14,7 +14,7 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     public IRoutableItem? CurrentPage => _handler.ActiveItem;
 
     /// <inheritdoc/>
-    public bool CanNavigateBack => _handler.CanPop;
+    public bool CanNavigateBackPage => _handler.CanPop;
 
 
     /// <inheritdoc/>
@@ -28,13 +28,6 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     }
 
     /// <inheritdoc/>
-    public async Task InitializeAsync(IHostViewModel host)
-    {
-        ArgumentNullException.ThrowIfNull(host);
-        await _handler.InitializeAsync(host).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc/>
     public async Task NavigateToAsync(Uri url, NavigationParameters? parameters = null)
     {
         ArgumentNullException.ThrowIfNull(url);
@@ -45,9 +38,9 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     }
 
     /// <inheritdoc/>
-    public async Task NavigateBackAsync(NavigationParameters? parameters = null)
+    public async Task NavigateBackPageAsync(NavigationParameters? parameters = null)
     {
-        if (!CanNavigateBack)
+        if (!CanNavigateBackPage)
         {
             return;
         }

@@ -13,7 +13,6 @@ internal sealed class WebPageNavigationHandler : INavigationHandler<IRoutableIte
 {
     private readonly ILogger _logger;
     private readonly IEnumerable<INavigationGuard> _navigationGuards;
-    private IHostViewModel? _host;
     private readonly NavigationStack<IRoutableItem> _stack;
 
     public event EventHandler<EventArgs>? ActiveItemChanged;
@@ -32,13 +31,6 @@ internal sealed class WebPageNavigationHandler : INavigationHandler<IRoutableIte
     }
 
     /// <inheritdoc/>
-    public Task InitializeAsync(IHostViewModel host)
-    {
-        _host = host ?? throw new ArgumentNullException(nameof(host));
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc/>
     public Task ClearAsync()
     {
         _stack.Clear();
@@ -48,26 +40,17 @@ internal sealed class WebPageNavigationHandler : INavigationHandler<IRoutableIte
     /// <inheritdoc/>
     public async Task PushAsync(IRoutableItem page, NavigationContext context)
     {
-        if (_host == null)
-        {
-            throw new InvalidOperationException("NavigationHandler is not initialized. Call InitializeAsync with a valid IHostViewModel before using.");
-        }
-
-        _host.IsBusy = true;
-
         foreach (INavigationGuard guard in _navigationGuards)
         {
             NavigationGuardResult result = await guard.CanNavigateAsync(ActiveItem, page, context).ConfigureAwait(false);
             if (!result.CanNavigate)
             {
-                _host.IsBusy = false;
                 return;
             }
         }
 
         _stack.Push(page);
         ActiveItemChanged?.Invoke(this, EventArgs.Empty);
-        _host.IsBusy = false;
     }
 
     /// <inheritdoc/>
