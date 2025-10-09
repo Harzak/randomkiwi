@@ -16,8 +16,6 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     /// <inheritdoc/>
     public bool CanNavigateBack => _handler.CanPop;
 
-    /// <inheritdoc/>
-    public event EventHandler<EventArgs>? CurrentPageChanging;
 
     /// <inheritdoc/>
     public event EventHandler<EventArgs>? CurrentPageChanged;
@@ -26,7 +24,6 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     {
         _handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
-        _handler.ActiveItemChanging += OnActiveViewModelChanging;
         _handler.ActiveItemChanged += OnActiveViewModelChanged;
     }
 
@@ -59,11 +56,6 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
         await _handler.PopAsync(context).ConfigureAwait(false);
     }
 
-    private void OnActiveViewModelChanging(object? sender, EventArgs e)
-    {
-        CurrentPageChanging?.Invoke(this, e);
-    }
-
     private void OnActiveViewModelChanged(object? sender, EventArgs e)
     {
         CurrentPageChanged?.Invoke(this, e);
@@ -73,7 +65,6 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     {
         if (_handler != null)
         {
-            _handler.ActiveItemChanging -= OnActiveViewModelChanging;
             _handler.ActiveItemChanged -= OnActiveViewModelChanged;
             _handler.Dispose();
         }

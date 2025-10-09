@@ -22,11 +22,6 @@ public interface IWebPageNavigationService : IDisposable
     IRoutableItem? CurrentPage { get; }
 
     /// <summary>
-    /// Occurs when the current page is about to change.
-    /// </summary>
-    event EventHandler<EventArgs>? CurrentPageChanging;
-
-    /// <summary>
     /// Occurs when the current page changes.
     /// </summary>
     event EventHandler<EventArgs>? CurrentPageChanged;

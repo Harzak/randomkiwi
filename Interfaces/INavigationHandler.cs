@@ -35,7 +35,6 @@ public interface INavigationHandler<T> : IDisposable where T : IRoutableItem
     /// </summary>
     Task PopAsync(NavigationContext context);
 
-    event EventHandler<EventArgs>? ActiveItemChanging;
 
     event EventHandler<EventArgs>? ActiveItemChanged;
 }

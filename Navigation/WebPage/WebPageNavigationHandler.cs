@@ -16,7 +16,6 @@ internal sealed class WebPageNavigationHandler : INavigationHandler<IRoutableIte
     private IHostViewModel? _host;
     private readonly NavigationStack<IRoutableItem> _stack;
 
-    public event EventHandler<EventArgs>? ActiveItemChanging;
     public event EventHandler<EventArgs>? ActiveItemChanged;
 
     /// <inheritdoc/>
@@ -61,27 +60,27 @@ internal sealed class WebPageNavigationHandler : INavigationHandler<IRoutableIte
             NavigationGuardResult result = await guard.CanNavigateAsync(ActiveItem, page, context).ConfigureAwait(false);
             if (!result.CanNavigate)
             {
+                _host.IsBusy = false;
                 return;
             }
         }
 
-        ActiveItemChanging?.Invoke(this, EventArgs.Empty);
-
         _stack.Push(page);
-
-        _host.IsBusy = false;
         ActiveItemChanged?.Invoke(this, EventArgs.Empty);
+        _host.IsBusy = false;
     }
 
     /// <inheritdoc/>
     public Task PopAsync(NavigationContext context)
     {
-        IRoutableItem? previousPage = _stack.Pop();
-        if (previousPage != null)
+        if (!CanPop)
         {
-            ActiveItemChanging?.Invoke(this, EventArgs.Empty);
-            ActiveItemChanged?.Invoke(this, EventArgs.Empty);
+            return Task.CompletedTask;
         }
+
+        _stack.Pop();
+        ActiveItemChanged?.Invoke(this, EventArgs.Empty);
+
         return Task.CompletedTask;
     }
 

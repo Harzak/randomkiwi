@@ -15,9 +15,6 @@ public sealed class ViewModelNavigationService : IViewModelNavigationService
     public bool CanNavigateBack => _handler.CanPop;
 
     /// <inheritdoc/>
-    public event EventHandler<EventArgs>? CurrentViewModelChanging;
-
-    /// <inheritdoc/>
     public event EventHandler<EventArgs>? CurrentViewModelChanged;
 
     public ViewModelNavigationService(INavigationHandler<IRoutableViewModel> handler, IServiceProvider viewModelProvider)
@@ -25,7 +22,6 @@ public sealed class ViewModelNavigationService : IViewModelNavigationService
         _handler = handler ?? throw new ArgumentNullException(nameof(handler));
         _viewModelProvider = viewModelProvider ?? throw new ArgumentNullException(nameof(viewModelProvider));
 
-        _handler.ActiveItemChanging += OnActiveViewModelChanging;
         _handler.ActiveItemChanged += OnActiveViewModelChanged;
     }
 
@@ -65,11 +61,6 @@ public sealed class ViewModelNavigationService : IViewModelNavigationService
         await _handler.PopAsync(context).ConfigureAwait(false);
     }
 
-    private void OnActiveViewModelChanging(object? sender, EventArgs e)
-    {
-        CurrentViewModelChanging?.Invoke(this, e);
-    }
-
     private void OnActiveViewModelChanged(object? sender, EventArgs e)
     {
         CurrentViewModelChanged?.Invoke(this, e);
@@ -79,7 +70,6 @@ public sealed class ViewModelNavigationService : IViewModelNavigationService
     {
         if (_handler != null)
         {
-            _handler.ActiveItemChanging -= OnActiveViewModelChanging;
             _handler.ActiveItemChanged -= OnActiveViewModelChanged;
             _handler.Dispose();
         }

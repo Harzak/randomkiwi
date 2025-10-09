@@ -45,7 +45,7 @@ public sealed class WebViewManager : IWebViewManager
             }
             if (value != null)
             {
-                SetCookies(value);
+                this.SetCookies(value);
                 _webView.Source = value.ToString();
             }
         }
@@ -60,7 +60,6 @@ public sealed class WebViewManager : IWebViewManager
         if (_webView == null)
         {
             _webView = new WebView();
-            _webView.Navigating += OnWebViewNavigating;
             _webView.Navigated += OnWebViewNavigated;
         }
 
@@ -97,9 +96,9 @@ public sealed class WebViewManager : IWebViewManager
         WikipediaWebViewLogs.NavigationCompleted(_logger, e.Url, isSuccess);
         _loadingToken?.Dispose();
 
-        if (this.Source != null &&  e.Url != this.Source.AbsoluteUri)
+        if (this.Source != null &&  e.Result == WebNavigationResult.Success && e.Url != this.Source.AbsoluteUri)
         {
-            UserNavigated?.Invoke(this, e);
+            this.UserNavigated?.Invoke(this, e);
         }
     }
 

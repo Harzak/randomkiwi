@@ -20,11 +20,6 @@ public interface IViewModelNavigationService : IDisposable
     IRoutableViewModel? CurrentViewModel { get; }
 
     /// <summary>
-    /// Occurs when the current view model is about to change.
-    /// </summary>
-    event EventHandler<EventArgs>? CurrentViewModelChanging;
-
-    /// <summary>
     /// Occurs when the current view model changes.
     /// </summary>
     event EventHandler<EventArgs>? CurrentViewModelChanged;
