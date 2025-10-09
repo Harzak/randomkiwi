@@ -60,6 +60,7 @@ public sealed class WebViewManager : IWebViewManager
         if (_webView == null)
         {
             _webView = new WebView();
+            _webView.Navigating += OnWebViewNavigating;
             _webView.Navigated += OnWebViewNavigated;
         }
 
