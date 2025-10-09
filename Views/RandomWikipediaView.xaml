@@ -40,12 +40,14 @@
         <ImageButton Margin="20,0" Aspect="Center"
                      Command="{Binding PreviousArticleCommand}"
                      HeightRequest="44" HorizontalOptions="End"
+                     IsEnabled="{Binding CanGoPrevious}"
                      Source="{StaticResource IconGoBack}"
                      VerticalOptions="Center" WidthRequest="44" />
 
         <ImageButton Margin="20,0" Aspect="Center"
                      Command="{Binding NextArticleCommand}"
                      HeightRequest="44" HorizontalOptions="End"
+                     IsEnabled="{Binding CanGoNext}"
                      Source="{StaticResource IconRefresh}"
                      VerticalOptions="Center" WidthRequest="44" />
 

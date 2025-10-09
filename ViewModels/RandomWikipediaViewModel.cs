@@ -13,6 +13,8 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
     public override string Name => nameof(RandomWikipediaViewModel);
     public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
     public bool IsLoaded => !this.IsLoading && !this.IsInError;
+    public bool CanGoNext => !this.IsLoading;
+    public bool CanGoPrevious => !this.IsLoading && base.NavigationService.CanNavigateBackPage;
 
     [ObservableProperty]
     private WikipediaWebViewViewModel _webViewViewModel;
@@ -20,6 +22,8 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLoaded))]
     [NotifyPropertyChangedFor(nameof(IsInError))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoPrevious))]
     private bool _isLoading;
 
     [ObservableProperty]
@@ -50,7 +54,7 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
     [RelayCommand]
     private async Task PreviousArticle()
     {
-        await this.ExecuteWithLoadingAsync(() => Task.FromResult(_articleCatalog.Previous())).ConfigureAwait(false);
+        await base.NavigationService.NavigateBackAsync().ConfigureAwait(false);
     }
 
     [RelayCommand]

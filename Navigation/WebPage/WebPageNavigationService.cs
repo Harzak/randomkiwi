@@ -23,7 +23,6 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     public WebPageNavigationService(INavigationHandler<IRoutableItem> handler)
     {
         _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-
         _handler.ActiveItemChanged += OnActiveViewModelChanged;
     }
 
