@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace randomkiwi.ViewModels;
+﻿namespace randomkiwi.ViewModels;
 
 public sealed partial class SettingsViewModel : BaseRoutableViewModel
 {
@@ -18,4 +16,3 @@ public sealed partial class SettingsViewModel : BaseRoutableViewModel
         await this.AppConfig.SaveAsync().ConfigureAwait(false);
     }
 }
-

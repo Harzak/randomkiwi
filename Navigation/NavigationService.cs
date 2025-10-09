@@ -1,87 +1,120 @@
-﻿namespace randomkiwi.Navigation;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace randomkiwi.Navigation;
+
+public interface INavigationService : IDisposable
+{
+    public IRoutableViewModel? CurrentViewModel { get; }
+    public bool CanNavigateBackViewModel { get; }
+
+    public string? CurrentWebUrl { get; }
+    public bool CanNavigateBackWeb { get; }
+
+    public event EventHandler<EventArgs>? CurrentViewModelChanged;
+    public event EventHandler<EventArgs>? CurrentWebUrlChanged;
+
+    Task InitializeAsync(IHostViewModel host);
+
+    Task NavigateToAsync(IRoutableViewModel viewModel, NavigationParameters? parameters = null);
+    Task NavigateToAsync(Uri url, NavigationParameters? parameters = null);
+    Task NavigateBackAsync(NavigationParameters? parameters = null);
+}
 
 /// <summary>
-/// Implementation of the navigation service that manages view model navigation and maintains a navigation stack.
+/// Unified navigation service that coordinates ViewModel and Web navigation
 /// </summary>
-public sealed class NavigationService : INavigationService
+internal sealed class NavigationService : INavigationService
 {
-    private readonly INavigationHandler _handler;
-    private readonly IServiceProvider _viewModelProvider;
+    private readonly IViewModelNavigationService _viewModelNavigation;
+    private readonly IWebPageNavigationService _webNavigation;
 
-    /// <inheritdoc/>
-    public IRoutableViewModel? CurrentViewModel => _handler.ActiveViewModel;
+    public IRoutableViewModel? CurrentViewModel => _viewModelNavigation.CurrentViewModel;
+    public bool CanNavigateBackViewModel => _viewModelNavigation.CanNavigateBack;
 
-    /// <inheritdoc/>
-    public bool CanNavigateBack => _handler.CanPop;
+    public string? CurrentWebUrl => _webNavigation.CurrentPage?.UrlPath;
+    public bool CanNavigateBackWeb => _webNavigation.CanNavigateBack;
 
-    /// <inheritdoc/>
-    public event EventHandler<EventArgs>? CurrentViewModelChanging;
-
-    /// <inheritdoc/>
     public event EventHandler<EventArgs>? CurrentViewModelChanged;
+    public event EventHandler<EventArgs>? CurrentWebUrlChanged;
 
-    public NavigationService(INavigationHandler handler, IServiceProvider viewModelProvider)
+    public NavigationService(
+        IViewModelNavigationService viewModelNavigation,
+        IWebPageNavigationService webNavigation)
     {
-        _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-        _viewModelProvider = viewModelProvider ?? throw new ArgumentNullException(nameof(viewModelProvider));
+        _viewModelNavigation = viewModelNavigation ?? throw new ArgumentNullException(nameof(viewModelNavigation));
+        _webNavigation = webNavigation ?? throw new ArgumentNullException(nameof(webNavigation));
 
-        _handler.ActiveViewModelChanging += OnActiveViewModelChanging;
-        _handler.ActiveViewModelChanged += OnActiveViewModelChanged;
+        _viewModelNavigation.CurrentViewModelChanged += OnCurrentViewModelChanged;
+        _webNavigation.CurrentPageChanged += OnCurrentWebPageChanged;
     }
 
-    /// <inheritdoc/>
     public async Task InitializeAsync(IHostViewModel host)
     {
-        ArgumentNullException.ThrowIfNull(host);
-        await _handler.InitializeAsync(host).ConfigureAwait(false);
+        await _viewModelNavigation.InitializeAsync(host).ConfigureAwait(false);
+        await _webNavigation.InitializeAsync(host).ConfigureAwait(false);
     }
 
-    /// <inheritdoc/>
-    public async Task NavigateToHomeAsync(NavigationParameters? parameters = null)
-    {
-        IRoutableViewModel homeViewModel = _viewModelProvider.GetRequiredService<RandomWikipediaViewModel>();
-        await _handler.ClearAsync().ConfigureAwait(false);
-        await NavigateToAsync(homeViewModel).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc/>
     public async Task NavigateToAsync(IRoutableViewModel viewModel, NavigationParameters? parameters = null)
     {
-        ArgumentNullException.ThrowIfNull(viewModel);
-
-        NavigationContext context = new(parameters);
-        await _handler.PushAsync(viewModel, context).ConfigureAwait(false);
+        await _viewModelNavigation.NavigateToAsync(viewModel, parameters).ConfigureAwait(false);
     }
 
-    /// <inheritdoc/>
+    public async Task NavigateToAsync(Uri url, NavigationParameters? parameters = null)
+    {
+        await _webNavigation.NavigateToAsync(url, parameters).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Smart navigation that prioritizes web navigation when in web-enabled ViewModels
+    /// </summary>
     public async Task NavigateBackAsync(NavigationParameters? parameters = null)
     {
-        if (!CanNavigateBack)
+        if (CurrentViewModel is RandomWikipediaViewModel && CanNavigateBackWeb)
         {
-            return;
+            await NavigateBackWebAsync(parameters).ConfigureAwait(false);
         }
-
-        NavigationContext context = new(parameters);
-        await _handler.PopAsync(context).ConfigureAwait(false);
+        else if (CanNavigateBackViewModel)
+        {
+            await NavigateBackViewModelAsync(parameters).ConfigureAwait(false);
+        }
     }
 
-    private void OnActiveViewModelChanging(object? sender, EventArgs e)
+    private async Task NavigateBackViewModelAsync(NavigationParameters? parameters = null)
     {
-        this.CurrentViewModelChanging?.Invoke(this, e);
+        await _viewModelNavigation.NavigateBackAsync(parameters).ConfigureAwait(false);
     }
 
-    private void OnActiveViewModelChanged(object? sender, EventArgs e)
+    private async Task NavigateBackWebAsync(NavigationParameters? parameters = null)
     {
-        this.CurrentViewModelChanged?.Invoke(this, e);
+        await _webNavigation.NavigateBackAsync(parameters).ConfigureAwait(false);
+    }
+
+    private void OnCurrentViewModelChanged(object? sender, EventArgs e)
+    {
+        CurrentViewModelChanged?.Invoke(this, e);
+    }
+
+    private void OnCurrentWebPageChanged(object? sender, EventArgs e)
+    {
+        CurrentWebUrlChanged?.Invoke(this, e);
     }
 
     public void Dispose()
     {
-        if (_handler != null)
+        if (_viewModelNavigation != null)
         {
-            _handler.ActiveViewModelChanging -= OnActiveViewModelChanging;
-            _handler.ActiveViewModelChanged -= OnActiveViewModelChanged;
-            _handler.Dispose();
+            _viewModelNavigation.CurrentViewModelChanged -= OnCurrentViewModelChanged;
+            _viewModelNavigation.Dispose();
+        }
+
+        if (_webNavigation != null)
+        {
+            _webNavigation.CurrentPageChanged -= OnCurrentWebPageChanged;
+            _webNavigation.Dispose();
         }
     }
 }

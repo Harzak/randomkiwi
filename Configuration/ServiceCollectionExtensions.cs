@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
+using randomkiwi.Navigation.ViewModels;
+using randomkiwi.Navigation.WebPage;
 using randomkiwi.Repositories;
 using randomkiwi.Services.Http;
 using System.Net;
@@ -44,7 +46,10 @@ public static class ServiceCollectionExtensions
         collection.AddTransient<IWebViewManager, WebViewManager>();
         collection.AddSingleton<IScriptLoader, ScriptLoader>();
         collection.AddSingleton<IUserPreferenceRepository, UserPreferenceRepository>();
-        collection.AddSingleton<INavigationHandler, NavigationHandler>();
+        collection.AddSingleton<INavigationHandler<IRoutableViewModel>, ViewModelNavigationHandler>();
+        collection.AddSingleton<INavigationHandler<IRoutableItem>, WebPageNavigationHandler>();
+        collection.AddSingleton<IViewModelNavigationService, ViewModelNavigationService>();
+        collection.AddSingleton<IWebPageNavigationService, WebPageNavigationService>();
         collection.AddSingleton<INavigationService, NavigationService>();
         collection.AddSingleton<IJsonStorage<UserPreferenceModel>>(provider =>
         {

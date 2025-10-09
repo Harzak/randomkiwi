@@ -11,7 +11,7 @@ public abstract partial class BaseRoutableViewModel : ObservableValidator, IRout
     protected INavigationService NavigationService { get; }
 
     /// <inheritdoc/>
-    public string UrlPathSegment { get; }
+    public string UrlPath { get; }
 
     /// <inheritdoc/>
     public abstract string Name { get; }
@@ -19,7 +19,7 @@ public abstract partial class BaseRoutableViewModel : ObservableValidator, IRout
     protected BaseRoutableViewModel(INavigationService navigationService)
     {
         this.NavigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-        this.UrlPathSegment = Guid.NewGuid().ToString()[..5];
+        this.UrlPath = Guid.NewGuid().ToString()[..5];
     }
 
     /// <inheritdoc/>

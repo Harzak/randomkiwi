@@ -18,6 +18,8 @@ public sealed class WebViewManager : IWebViewManager
     private IDisposable? _loadingToken;
     private WebView? _webView;
 
+    public event EventHandler<WebNavigatedEventArgs>? UserNavigated;
+
     public WebViewManager(
         IWebViewConfigurator webViewConfigurator,
         ILoadingService loadingService,
@@ -36,7 +38,7 @@ public sealed class WebViewManager : IWebViewManager
         get => _webView?.Source is UrlWebViewSource urlSource ? new Uri(urlSource.Url) : null;
         set
         {
-            if(_webView == null)
+            if (_webView == null)
             {
                 return;
                 throw new InvalidOperationException("WebView is not created. Call CreateView() before setting the Source.");
@@ -94,6 +96,11 @@ public sealed class WebViewManager : IWebViewManager
 
         WikipediaWebViewLogs.NavigationCompleted(_logger, e.Url, isSuccess);
         _loadingToken?.Dispose();
+
+        if (this.Source != null &&  e.Url != this.Source.AbsoluteUri)
+        {
+            UserNavigated?.Invoke(this, e);
+        }
     }
 
     private void SetCookies(Uri targetUri)

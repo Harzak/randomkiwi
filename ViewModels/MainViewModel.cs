@@ -73,6 +73,13 @@ public sealed partial class MainViewModel : ObservableObject, IHostViewModel
         IsFlyoutPresented = false;
     }
 
+
+    [RelayCommand]
+    private async Task TestPrevious()
+    {
+        await _navigationService.NavigateBackAsync().ConfigureAwait(false);
+    }
+
     private void OnCurrentViewModelChanged(object? sender, EventArgs e)
     {
         CurrentViewModel = _navigationService.CurrentViewModel;  

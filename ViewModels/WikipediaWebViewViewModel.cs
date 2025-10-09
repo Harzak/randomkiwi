@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Threading.Tasks;
 
 namespace randomkiwi.ViewModels;
 
@@ -10,6 +11,7 @@ namespace randomkiwi.ViewModels;
 public sealed partial class WikipediaWebViewViewModel : ObservableObject, IDisposable
 {
     private readonly IWebViewManager _webViewManager;
+    private readonly INavigationService _navigationService;
 
     /// <summary>
     /// Gets the WebView manager for programmatic control of the WebView.
@@ -21,9 +23,20 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject, IDispo
     [ObservableProperty]
     private View? _webView;
 
-    public WikipediaWebViewViewModel(IWebViewManager webViewManager)
+    public WikipediaWebViewViewModel(IWebViewManager webViewManager, INavigationService navigationService)
     {
         _webViewManager = webViewManager ?? throw new ArgumentNullException(nameof(webViewManager));
+        _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+
+        _webViewManager.UserNavigated += OnWebViewManagerUserNavigated;
+    }
+
+    private async void OnWebViewManagerUserNavigated(object? sender, WebNavigatedEventArgs e)
+    {
+        if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri? uri))
+        {
+            await _navigationService.NavigateToAsync(uri).ConfigureAwait(false);
+        }
     }
 
     public async Task InitializeAsync()
@@ -31,13 +44,14 @@ public sealed partial class WikipediaWebViewViewModel : ObservableObject, IDispo
         this.WebView = await MainThread.InvokeOnMainThreadAsync(_webViewManager.CreateView).ConfigureAwait(false);
     }
 
-    public void NavigateToUrl(Uri uri)
+    public async Task NavigateToUrlAsync(Uri uri)
     {
         ArgumentNullException.ThrowIfNull(uri);
         if (this.WebView == null)
         {
             throw new InvalidOperationException("WebView is not initialized. Call InitializeAsync() before navigating.");
         }
+        await _navigationService.NavigateToAsync(uri).ConfigureAwait(false);
 
         MainThread.BeginInvokeOnMainThread(() =>
         {

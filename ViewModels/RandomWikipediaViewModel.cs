@@ -71,14 +71,14 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
         using IDisposable loadingToken = _loadingService.BeginLoading();
 
         OperationResult result = await operation().ConfigureAwait(false);
-        this.HandleResult(result);
+        await this.HandleResultAsync(result).ConfigureAwait(false);
     }
 
-    private void HandleResult(OperationResult result)
+    private async Task HandleResultAsync(OperationResult result)
     {
         if (result.IsSuccess && _articleCatalog.Current?.Url != null)
         {
-            this.WebViewViewModel.NavigateToUrl(_articleCatalog.Current.Url);
+            await this.WebViewViewModel.NavigateToUrlAsync(_articleCatalog.Current.Url).ConfigureAwait(false);
         }
         else
         {

@@ -15,5 +15,5 @@ public interface INavigationGuard
     /// <summary>
     /// Determines whether navigation from the specified source view model to the target view model is allowed.
     /// </summary>
-    Task<NavigationGuardResult> CanNavigateAsync(IRoutableViewModel? from, IRoutableViewModel to, NavigationContext context);
+    Task<NavigationGuardResult> CanNavigateAsync(IRoutableItem? from, IRoutableItem to, NavigationContext context);
 }

@@ -3,12 +3,12 @@
 /// <summary>
 /// Defines a contract for handling navigation between view models.
 /// </summary>
-public interface INavigationHandler : IDisposable
+public interface INavigationHandler<T> : IDisposable where T : IRoutableItem
 {
     /// <summary>
     /// Gets the currently active view model in the navigation system.
     /// </summary>
-    IRoutableViewModel? ActiveViewModel { get; }
+    T? ActiveItem { get; }
 
     /// <summary>
     /// Gets a value indicating whether there are items available to be removed from the stack.
@@ -28,14 +28,14 @@ public interface INavigationHandler : IDisposable
     /// <summary>
     /// Pushes the specified view model onto the navigation stack.
     /// </summary>
-    Task PushAsync(IRoutableViewModel viewModel, NavigationContext context);
+    Task PushAsync(T item, NavigationContext context);
 
     /// <summary>
     /// Removes the top page from the navigation stack.
     /// </summary>
     Task PopAsync(NavigationContext context);
 
-    event EventHandler<EventArgs>? ActiveViewModelChanging;
+    event EventHandler<EventArgs>? ActiveItemChanging;
 
-    event EventHandler<EventArgs>? ActiveViewModelChanged;
+    event EventHandler<EventArgs>? ActiveItemChanged;
 }

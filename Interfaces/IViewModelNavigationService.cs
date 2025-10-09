@@ -3,7 +3,7 @@
 /// <summary>
 /// Service interface for managing navigation between different views and view models in the application.
 /// </summary>
-public interface INavigationService : IDisposable
+public interface IViewModelNavigationService : IDisposable
 {
 
     /// <summary>

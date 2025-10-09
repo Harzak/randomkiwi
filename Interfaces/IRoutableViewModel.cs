@@ -3,18 +3,8 @@
 /// <summary>
 /// Interface for view models that can be navigated to and managed by the navigation service.
 /// </summary>
-public interface IRoutableViewModel : IDisposable
+public interface IRoutableViewModel : IRoutableItem,  IDisposable
 {
-    /// <summary>
-    /// Gets the display name of the view model for UI presentation.
-    /// </summary>
-    public string Name { get; }
-
-    /// <summary>
-    /// Gets the URL path segment identifier for this view model.
-    /// </summary>
-    public string UrlPathSegment { get; }
-
     /// <summary>
     /// Asynchronously performs initialization logic when the component is first rendered.
     /// </summary>

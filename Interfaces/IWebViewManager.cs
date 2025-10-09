@@ -24,4 +24,6 @@ public interface IWebViewManager : IDisposable
     /// Creates and returns the actual WebView control.
     /// </summary>
     View CreateView();
+
+    event EventHandler<WebNavigatedEventArgs>? UserNavigated;
 }
