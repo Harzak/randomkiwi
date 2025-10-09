@@ -78,6 +78,7 @@ public sealed class WebViewManager : IWebViewManager
 
     private void OnWebViewNavigating(object? sender, WebNavigatingEventArgs e)
     {
+        _loadingToken?.Dispose();
         _loadingToken = _loadingService.BeginLoading();
         _isNavigated = false;
         WikipediaWebViewLogs.NavigationStarted(_logger, e.Url?.ToString());

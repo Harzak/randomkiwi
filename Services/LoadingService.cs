@@ -14,11 +14,12 @@ namespace randomkiwi.Services;
 public sealed class LoadingService : ILoadingService
 {
     private readonly Lock _lock;
-    private CancellationTokenSource? _debounceTokenSource;
+    private readonly System.Timers.Timer _debounceTimer;
     private DateTime? _loadingStartTime;
     private readonly int _debounceMilliseconds;
     private readonly int _minimumDisplayMilliseconds;
     private int _activeOperations;
+
     public bool IsLoading => _activeOperations > 0;
 
     public event EventHandler<LoadingChangedEventArgs>? IsLoadingChanged;
@@ -32,6 +33,13 @@ public sealed class LoadingService : ILoadingService
         _minimumDisplayMilliseconds = minimumDisplayMilliseconds > 0
             ? minimumDisplayMilliseconds
             : throw new ArgumentOutOfRangeException(nameof(minimumDisplayMilliseconds), "Must be non-negative");
+
+        _debounceTimer = new System.Timers.Timer(_debounceMilliseconds)
+        {
+            AutoReset = false,
+            Enabled = false
+        };
+        _debounceTimer.Elapsed += OnDebounceTimerElapsed;
     }
 
     /// <inheritdoc />
@@ -40,10 +48,7 @@ public sealed class LoadingService : ILoadingService
         lock (_lock)
         {
             _activeOperations++;
-
-            _debounceTokenSource?.Cancel();
-            _debounceTokenSource = null;
-
+            _debounceTimer.Stop();
             _loadingStartTime = DateTime.UtcNow;
             this.InvokeIsLoadingChanged(isLoading: true);
         }
@@ -69,21 +74,13 @@ public sealed class LoadingService : ILoadingService
             loadingStartTime = _loadingStartTime;
         }
 
-        _ = CompleteLoadingAsync(loadingStartTime);
+        _ = this.CompleteLoadingAsync(loadingStartTime);
     }
 
     private async Task CompleteLoadingAsync(DateTime? loadingStartTime)
     {
-        await WaitMinimumDurationAsync(loadingStartTime).ConfigureAwait(false);
-        await WaitDebounceAsync().ConfigureAwait(false);
-
-        lock (_lock)
-        {
-            if (_activeOperations == 0)
-            {
-                InvokeIsLoadingChanged(isLoading: false);
-            }
-        }
+        await this.WaitMinimumDurationAsync(loadingStartTime).ConfigureAwait(false);
+        this.StartDebounceTimer();
     }
 
     /// <summary>
@@ -103,30 +100,32 @@ public sealed class LoadingService : ILoadingService
     }
 
     /// <summary>
-    /// Waits for the specified debounce interval, canceling any previous pending wait if invoked again.
+    /// Starts the debounce timer that will fire the loading end event after the specified interval.
     /// </summary>
-    private async Task WaitDebounceAsync()
+    private void StartDebounceTimer()
     {
-        if (_debounceTokenSource != null)
+        lock (_lock)
         {
-            await _debounceTokenSource.CancelAsync().ConfigureAwait(false);
-            _debounceTokenSource.Dispose();
-        }
+            if (_activeOperations > 0)
+            {
+                return;
+            }
 
-        _debounceTokenSource = new CancellationTokenSource();
-        CancellationToken token = _debounceTokenSource.Token;
+            _debounceTimer.Start();
+        }
+    }
 
-        try
+    /// <summary>
+    /// Handles the debounce timer elapsed event to finalize loading state.
+    /// </summary>
+    private void OnDebounceTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        lock (_lock)
         {
-            await Task.Delay(_debounceMilliseconds, token).ConfigureAwait(false);
-        }
-        catch (TaskCanceledException)
-        {
-            return;
-        }
-        catch (Exception)
-        {
-            throw;
+            if (_activeOperations == 0)
+            {
+                this.InvokeIsLoadingChanged(isLoading: false);
+            }
         }
     }
 
@@ -143,8 +142,11 @@ public sealed class LoadingService : ILoadingService
         {
             if (disposing)
             {
-                _debounceTokenSource?.Cancel();
-                _debounceTokenSource?.Dispose();
+                lock (_lock)
+                {
+                    _debounceTimer?.Stop();
+                    _debounceTimer?.Dispose();
+                }
             }
             _disposed = true;
         }
