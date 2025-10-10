@@ -13,4 +13,5 @@ public sealed record UserPreferenceModel
 {
     public required string AppLanguage { get; init; }
     public required AppTheme Theme { get; init; }
+    public required EArticleDetail ArticleDetail { get; init; }
 }

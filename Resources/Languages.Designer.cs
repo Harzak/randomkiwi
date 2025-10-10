@@ -61,6 +61,15 @@ namespace randomkiwi.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Any.
+        /// </summary>
+        public static string Any {
+            get {
+                return ResourceManager.GetString("Any", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Appearance.
         /// </summary>
         public static string Appearance {
@@ -84,6 +93,33 @@ namespace randomkiwi.Resources {
         public static string Bookmarks {
             get {
                 return ResourceManager.GetString("Bookmarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the minimum level of detail for Wikipedia articles.
+        /// </summary>
+        public static string ChooseMinArticleDetail {
+            get {
+                return ResourceManager.GetString("ChooseMinArticleDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detailed.
+        /// </summary>
+        public static string Detailed {
+            get {
+                return ResourceManager.GetString("Detailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keeps only long / in-depth pages.
+        /// </summary>
+        public static string DetailedLabel {
+            get {
+                return ResourceManager.GetString("DetailedLabel", resourceCulture);
             }
         }
         
@@ -124,11 +160,47 @@ namespace randomkiwi.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Medium.
+        /// </summary>
+        public static string Medium {
+            get {
+                return ResourceManager.GetString("Medium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters out short / stub pages.
+        /// </summary>
+        public static string MediumLabel {
+            get {
+                return ResourceManager.GetString("MediumLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum article detail.
+        /// </summary>
+        public static string MinArticleDetail {
+            get {
+                return ResourceManager.GetString("MinArticleDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No bookmarks available..
         /// </summary>
         public static string NoBookmarksAvailable {
             get {
                 return ResourceManager.GetString("NoBookmarksAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No filtering (everything included).
+        /// </summary>
+        public static string NoFiltering {
+            get {
+                return ResourceManager.GetString("NoFiltering", resourceCulture);
             }
         }
         

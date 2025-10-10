@@ -25,6 +25,10 @@ public interface IAppConfiguration
     /// </summary>
     AppTheme CurrentTheme { get; set; }
     string LanguageCode { get; }
+    /// <summary>
+    /// Gets or sets the detail level about the article.
+    /// </summary>
+    EArticleDetail ArticleDetail { get; set; }
     Version AppVersion { get; }
 
     Task InitializeAsync();

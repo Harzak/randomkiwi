@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using randomkiwi.ViewModels;
 using randomkiwi.Views;
 
@@ -13,13 +14,30 @@ public partial class MainView : ContentPage
         _viewModel = viewModel;
         BindingContext = viewModel;
 
+        WeakReferenceMessenger.Default.Register<ShowWikipediaRandomSettingsPopupMessage>(this, (r, m) =>
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                popupWikipediaRandomSettings.BindingContext = m.ViewModel;
+                popupWikipediaRandomSettings.Show();
+            });
+        });
+
+        WeakReferenceMessenger.Default.Register<ClosePopupWikipediaRandomSettingsMessage>(this, (r, m) =>
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                popupWikipediaRandomSettings.IsOpen = false;
+            });
+        });
+
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        
+
         if (_viewModel != null)
         {
             await _viewModel.InitializeAsync().ConfigureAwait(false);
@@ -43,7 +61,7 @@ public partial class MainView : ContentPage
         }
 
         IRoutableViewModel currentViewModel = _viewModel.CurrentViewModel;
-        
+
         View? view = currentViewModel switch
         {
             RandomWikipediaViewModel mainVM => new RandomWikipediaView { BindingContext = mainVM },
@@ -60,7 +78,7 @@ public partial class MainView : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        
+
         if (_viewModel != null)
         {
             _viewModel.PropertyChanged -= OnViewModelPropertyChanged;

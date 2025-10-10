@@ -1,0 +1,80 @@
+<Grid x:Class="randomkiwi.Views.WikipediaRandomSettingsView"
+      xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:models="clr-namespace:randomkiwi.Models"
+      xmlns:popup="clr-namespace:Syncfusion.Maui.Toolkit.Popup;assembly=Syncfusion.Maui.Toolkit"
+      xmlns:res="clr-namespace:randomkiwi.Resources"
+      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+      xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
+      x:DataType="viewModels:WikipediaRandomSettingsViewModel"
+      BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
+                                        Dark={StaticResource DarkBackground}}"
+      RowDefinitions="Auto,*">
+
+    <Grid Grid.Row="0" Margin="24,10" ColumnDefinitions="*,Auto">
+        <Label Grid.Column="0" Style="{StaticResource Header2}" Text="{x:Static res:Languages.Settings}" />
+
+        <ImageButton Grid.Column="1" Aspect="Center"
+                     Command="{Binding CloseCommand}"
+                     HeightRequest="44"
+                     Source="{StaticResource IconClose}"
+                     VerticalOptions="Center" WidthRequest="44" />
+    </Grid>
+
+    <ScrollView Grid.Row="1">
+        <StackLayout Padding="24,0">
+
+            <!--  Article Detail Filter Section  -->
+            <Border Style="{StaticResource SectionBorder}">
+                <StackLayout Spacing="20">
+
+                    <!--  Section Header  -->
+                    <StackLayout Spacing="8">
+                        <Label Style="{StaticResource Header1}" Text="{x:Static res:Languages.MinArticleDetail}" />
+                        <Label Text="{x:Static res:Languages.ChooseMinArticleDetail}" />
+                    </StackLayout>
+
+                    <BoxView Margin="0,8" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" HeightRequest="1" />
+
+                    <StackLayout RadioButtonGroup.GroupName="ArticleDetail" RadioButtonGroup.SelectedValue="{Binding SelectedArticleDetail}" Spacing="16">
+
+                        <!--  Any Option  -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <RadioButton Grid.Column="0" VerticalOptions="Center" Value="{x:Static models:EArticleDetail.Any}" />
+                            <StackLayout Grid.Column="1" Spacing="4">
+                                <Label Style="{StaticResource Header3}" Text="{x:Static res:Languages.Any}" />
+                                <Label Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.NoFiltering}" />
+                            </StackLayout>
+                        </Grid>
+
+                        <!--  Medium Option  -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <RadioButton Grid.Column="0" VerticalOptions="Center" Value="{x:Static models:EArticleDetail.Medium}" />
+                            <StackLayout Grid.Column="1" Spacing="4">
+                                <Label Style="{StaticResource Header3}" Text="{x:Static res:Languages.Medium}" />
+                                <Label Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.MediumLabel}" />
+                            </StackLayout>
+                        </Grid>
+
+                        <!--  Detailed Option  -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <RadioButton Grid.Column="0" VerticalOptions="Center" Value="{x:Static models:EArticleDetail.Detailed}" />
+                            <StackLayout Grid.Column="1" Spacing="4">
+                                <Label Style="{StaticResource Header3}" Text="{x:Static res:Languages.Detailed}" />
+                                <Label Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.DetailedLabel}" />
+                            </StackLayout>
+                        </Grid>
+
+                    </StackLayout>
+                </StackLayout>
+
+                <Border.Shadow>
+                    <Shadow Brush="{AppThemeBinding Light={StaticResource Gray300},
+                                                    Dark={StaticResource Black}}"
+                            Opacity="0.1" Radius="8" Offset="0,2" />
+                </Border.Shadow>
+            </Border>
+
+        </StackLayout>
+    </ScrollView>
+</Grid>

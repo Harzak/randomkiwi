@@ -9,12 +9,13 @@ namespace randomkiwi.Services;
 internal sealed class WikipediaArticleCatalog : IArticleCatalog
 {
     private const int POOL_THRESHOLD = 20;
-    private const int CATALOG_THRESHOLD = 40;
+    private const int CATALOG_THRESHOLD = 20;
 
     private readonly ILogger _logger;
     private readonly IWikipediaAPIClient _apiClient;
     private readonly IWikipediaUrlBuilder _urlBuilder;
     private readonly IUserMetricsService _userMetricsService;
+    private readonly IAppConfiguration _appConfiguration;
 
     private readonly Queue<WikipediaArticleMetadata> _pool;
     private readonly List<WikipediaArticleMetadata> _catalog;
@@ -27,11 +28,13 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         IWikipediaAPIClient apiClient,
         IWikipediaUrlBuilder urlBuilder,
         IUserMetricsService userMetricsService,
+        IAppConfiguration appConfiguration,
         ILogger<WikipediaArticleCatalog> logger)
     {
         _apiClient = apiClient;
         _urlBuilder = urlBuilder;
         _userMetricsService = userMetricsService;
+        _appConfiguration = appConfiguration;
         _logger = logger;
         _lock = new Lock();
         _pool = [];
@@ -52,6 +55,18 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
             return OperationResult.Success();
         }
         return OperationResult.Failure("Failed to initialize article catalog.");
+    }
+
+    /// <inheritdoc />
+    public async Task<OperationResult> RefreshAsync()
+    {
+        lock (_lock)
+        {
+            _pool.Clear();
+            _catalog.Clear();
+            _currentIndex = 0;
+        }
+        return await this.InitializeAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -138,19 +153,21 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     private async Task<OperationResult> FeedPoolAsync(int targetPoolSize = POOL_THRESHOLD)
     {
         OperationResult result = new();
+        int added = 0;
 
         if (_pool.Count >= targetPoolSize / 2)
         {
             return result.WithSuccess();
         }
 
-        OperationResultList<PageDto> apiResult = await _apiClient.GetRandomPagesAsync(targetPoolSize).ConfigureAwait(false);
+        int optimalFetchSize = this.GetOptimalFetchSize(targetPoolSize);
+        OperationResultList<PageDto> apiResult = await _apiClient.GetRandomPagesAsync(optimalFetchSize).ConfigureAwait(false);
 
         if (apiResult.IsSuccess && apiResult.HasContent)
         {
             lock (_lock)
             {
-                foreach (PageDto page in apiResult.Content)
+                foreach (PageDto page in apiResult.Content.Where(ApplyFilter))
                 {
                     _pool.Enqueue(new WikipediaArticleMetadata
                     {
@@ -160,7 +177,13 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
                         Description = string.Empty,
                         Url = _urlBuilder.BuildArticleUrl(page.Title)
                     });
+                    added++;
                 }
+            }
+
+            if (_pool.Count < targetPoolSize)
+            {
+                await this.FeedPoolAsync(targetPoolSize - added).ConfigureAwait(false);
             }
 
             WikipediaArticleCatalogLogs.PoolReplenished(_logger, _pool.Count);
@@ -169,6 +192,33 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
 
         WikipediaArticleCatalogLogs.FailedReplenishPool(_logger, apiResult.ErrorMessage);
         return apiResult;
+    }
+
+    private bool ApplyFilter(PageDto page)
+    {
+        return page.Length > this.GetDesiredArticleLength() && (page.PageProps == null || page.PageProps.Disambiguation == null);
+    }
+
+    private int GetOptimalFetchSize(int poolSize)
+    {
+        return _appConfiguration.ArticleDetail switch
+        {
+            EArticleDetail.Any => poolSize * 2,
+            EArticleDetail.Medium => poolSize * 10,
+            EArticleDetail.Detailed => poolSize * 30,
+            _ => 0,
+        };
+    }
+
+    private int GetDesiredArticleLength()
+    {
+        return _appConfiguration.ArticleDetail switch
+        {
+            EArticleDetail.Any => 1000,
+            EArticleDetail.Medium => 10000,
+            EArticleDetail.Detailed => 30000,
+            _ => 0,
+        };
     }
 
     private bool _disposed;

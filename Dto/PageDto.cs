@@ -13,6 +13,9 @@ public record PageDto
     [JsonPropertyName("title")]
     public string Title { get; init; } = string.Empty;
 
+    [JsonPropertyName("length")]
+    public int Length { get; init; }
+
     [JsonPropertyName("pageprops")]
     public PagePropertyDto? PageProps { get; init; }
 }

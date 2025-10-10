@@ -5,7 +5,7 @@ namespace randomkiwi.ViewModels;
 /// <summary>
 /// Abstract base class for view models that can be navigated to and support routing functionality.
 /// </summary>
-public abstract partial class BaseRoutableViewModel : ObservableValidator, IRoutableViewModel
+public abstract partial class BaseRoutableViewModel : ObservableObject, IRoutableViewModel
 {
     /// <inheritdoc/>
     protected INavigationService NavigationService { get; }
@@ -15,6 +15,9 @@ public abstract partial class BaseRoutableViewModel : ObservableValidator, IRout
 
     /// <inheritdoc/>
     public abstract string Name { get; }
+
+    /// <inheritdoc/>
+    public abstract bool CanBeConfigured { get; }
 
     protected BaseRoutableViewModel(INavigationService navigationService)
     {
@@ -42,6 +45,12 @@ public abstract partial class BaseRoutableViewModel : ObservableValidator, IRout
 
     /// <inheritdoc/>
     public virtual Task OnForceDestroyAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public virtual Task OpenConfigurationAsync()
     {
         return Task.CompletedTask;
     }

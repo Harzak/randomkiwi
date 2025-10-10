@@ -24,6 +24,7 @@ public partial class App : Application
 
         return new Window(view)
         {
+            Title = AppConsts.APP_NAME,
 #if DEBUG && WINDOWS
             Height = 640,
             Width = 360,

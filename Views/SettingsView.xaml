@@ -11,44 +11,40 @@
     <VerticalStackLayout Margin="10,0">
 
         <!--  App language  -->
-        <Label Margin="5,10" FontSize="12" Text="{x:Static res:Languages.Language}" />
-        <Border Padding="10">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
+        <Label Margin="5,10" Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.Language}" />
+        <Border Style="{StaticResource SectionBorder}">
 
             <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" Grid.Column="0"
-                       Text="{x:Static res:Languages.AppLanguage}"
-                       VerticalOptions="Center" />
+                       Style="{StaticResource Header3}"
+                       Text="{x:Static res:Languages.AppLanguage}" />
                 <Picker Grid.Row="0" Grid.Column="1"
                         ItemDisplayBinding="{Binding NativeName}"
                         ItemsSource="{Binding AppConfig.SupportedCultures}"
                         SelectedIndexChanged="SelectedCultureIndexChanged"
                         SelectedItem="{Binding AppConfig.CurrentCulture}" />
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                       Margin="0,5,0,0" FontSize="12" Opacity="0.8"
+                       Margin="0,10,0,0"
+                       Style="{StaticResource Subtitle}"
                        Text="{x:Static res:Languages.SelectAppLanguage}" />
             </Grid>
         </Border>
 
         <!--  Display  -->
-        <Label Margin="5,10" FontSize="12" Text="{x:Static res:Languages.Display}" />
-        <Border Padding="10">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
+        <Label Margin="5,30,0,10" Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.Display}" />
+        <Border Style="{StaticResource SectionBorder}">
 
             <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" Grid.Column="0"
-                       Text="{x:Static res:Languages.Appearance}"
-                       VerticalOptions="Center" />
+                       Style="{StaticResource Header3}"
+                       Text="{x:Static res:Languages.Appearance}" />
                 <Picker Grid.Row="0" Grid.Column="1"
                         ItemsSource="{Binding AppConfig.AvailableThemes}"
                         SelectedIndexChanged="SelectedThemeIndexChanged"
                         SelectedItem="{Binding AppConfig.CurrentTheme}" />
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                       Margin="0,5,0,0" FontSize="12" Opacity="0.8"
+                       Margin="0,10,0,0"
+                       Style="{StaticResource Subtitle}"
                        Text="{x:Static res:Languages.SelectAppColor}" />
             </Grid>
         </Border>

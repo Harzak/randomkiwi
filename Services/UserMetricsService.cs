@@ -6,6 +6,7 @@
 internal sealed class UserMetricsService : IUserMetricsService
 {
     private const int MAX_RECENT_NAVIGATIONS = 20;
+    private const int BASE_SIZE_POOL = 20;
 
     private readonly UserSessionMetrics _sessionMetrics;
 
@@ -73,15 +74,14 @@ internal sealed class UserMetricsService : IUserMetricsService
 
     public int GetOptimalPoolSize()
     {
-        const int baseSize = 20;
         EUserNavigationPattern pattern = AnalyzeNavigationPattern();
 
         return pattern switch
         {
-            EUserNavigationPattern.Reviewer => baseSize, // Standard size is fine
-            EUserNavigationPattern.Explorer => (int)(baseSize * 1.5), // Moderate increase
-            EUserNavigationPattern.Reader => baseSize * 2, // Needs more forward articles
-            _ => baseSize
+            EUserNavigationPattern.Reviewer => BASE_SIZE_POOL, // Standard size is fine
+            EUserNavigationPattern.Explorer => (int)(BASE_SIZE_POOL * 1.5), // Moderate increase
+            EUserNavigationPattern.Reader => BASE_SIZE_POOL * 2, // Needs more forward articles
+            _ => BASE_SIZE_POOL
         };
     }
 

@@ -8,8 +8,6 @@
       xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
       x:Name="MainPage"
       x:DataType="viewModels:RandomWikipediaViewModel"
-      BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                        Dark={StaticResource OffBlack}}"
       ColumnDefinitions="*"
       RowDefinitions="*,Auto">
 
@@ -26,9 +24,7 @@
            VerticalOptions="Center" />
 
     <!--  Loading  -->
-    <progressBar:SfCircularProgressBar Grid.Row="0" Grid.Column="0"
-                                       Background="{AppThemeBinding Light={StaticResource White},
-                                                                    Dark={StaticResource OffBlack}}"
+    <progressBar:SfCircularProgressBar Grid.Row="0" Grid.Column="0" Background="Transparent"
                                        IsIndeterminate="True"
                                        IsVisible="{Binding IsLoading}"
                                        ProgressFill="{StaticResource Kiwi}"

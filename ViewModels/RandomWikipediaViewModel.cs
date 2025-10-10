@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using randomkiwi.Events;
 using randomkiwi.Utilities.Results;
 
@@ -9,8 +10,10 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
 {
     private readonly IArticleCatalog _articleCatalog;
     private readonly ILoadingService _loadingService;
+    private readonly IAppConfiguration _appConfiguration;
 
     public override string Name => nameof(RandomWikipediaViewModel);
+    public override bool CanBeConfigured => true;
     public bool IsInError => !string.IsNullOrWhiteSpace(this.ErrorMessage);
     public bool IsLoaded => !this.IsLoading && !this.IsInError;
     public bool CanGoNext => !this.IsLoading;
@@ -35,12 +38,14 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
         WikipediaWebViewViewModel webViewViewModel,
         IArticleCatalog articleCatalog,
         ILoadingService loadingService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        IAppConfiguration appConfiguration)
     : base(navigationService)
     {
         _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
         _articleCatalog = articleCatalog ?? throw new ArgumentNullException(nameof(articleCatalog));
         _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
+        _appConfiguration = appConfiguration ?? throw new ArgumentNullException(nameof(appConfiguration));
 
         _loadingService.IsLoadingChanged += OnIsLoadingChanged;
     }
@@ -67,6 +72,18 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
     private async Task AddBookmark()
     {
         await this.ExecuteWithLoadingAsync(_articleCatalog.BookmarkAsync).ConfigureAwait(false);
+    }
+
+    public override Task OpenConfigurationAsync()
+    {
+        WikipediaRandomSettingsViewModel vm = new(_appConfiguration, callback: OnArticleDetailChanged);
+        WeakReferenceMessenger.Default.Send(new ShowWikipediaRandomSettingsPopupMessage(vm));
+        return Task.CompletedTask;
+    }
+
+    private async void OnArticleDetailChanged(EArticleDetail selectedArticleDetail)
+    {
+        await this.ExecuteWithLoadingAsync(_articleCatalog.RefreshAsync).ConfigureAwait(false);
     }
 
     private async Task ExecuteWithLoadingAsync(Func<Task<OperationResult>> operation)

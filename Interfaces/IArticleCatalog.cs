@@ -18,6 +18,11 @@ public interface IArticleCatalog : IDisposable
     Task<OperationResult> InitializeAsync();
 
     /// <summary>
+    /// Refreshes the internal state by clearing existing data and reinitializing resources.
+    /// </summary>
+    Task<OperationResult> RefreshAsync();
+
+    /// <summary>
     /// Retrieves the previous item in the sequence asynchronously.
     /// </summary>
     OperationResult Previous();

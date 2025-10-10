@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace randomkiwi.ViewModels;
 
@@ -11,7 +12,11 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly INavigationService _navigationService;
     private readonly IServiceProvider _serviceProvider;
 
+    /// <inheritdoc/>
+    public bool CanOpenOverflowMenu => this.CurrentViewModel?.CanBeConfigured ?? false;
+
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanOpenOverflowMenu))]
     private IRoutableViewModel? _currentViewModel;
 
     [ObservableProperty]
@@ -58,6 +63,15 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task OpenOverflowMenu()
+    {
+        if (this.CurrentViewModel != null && this.CurrentViewModel.CanBeConfigured)
+        {
+            await CurrentViewModel.OpenConfigurationAsync().ConfigureAwait(false);
+        }
+    }
+
+    [RelayCommand]
     private void ToggleFlyout()
     {
         IsFlyoutPresented = !IsFlyoutPresented;
@@ -71,7 +85,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     private void OnCurrentViewModelChanged(object? sender, EventArgs e)
     {
-        CurrentViewModel = _navigationService.CurrentViewModel;  
+        CurrentViewModel = _navigationService.CurrentViewModel;
     }
 
     private bool _disposed;

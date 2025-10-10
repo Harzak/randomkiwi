@@ -71,6 +71,9 @@ internal sealed class AppConfiguration : IAppConfiguration
         }
     }
 
+    ///<inheritdoc/>
+    public EArticleDetail ArticleDetail { get; set; }
+
     public Version AppVersion { get; }
 
     public AppConfiguration(IUserPreferenceRepository userPreferenceRepository)
@@ -100,6 +103,7 @@ internal sealed class AppConfiguration : IAppConfiguration
                                         ?? this.GetDefaultCulture();
 
             this.CurrentTheme = this.AvailableThemes.FirstOrDefault(x => x == preferencesResult.Content.Theme);
+            this.ArticleDetail = preferencesResult.Content.ArticleDetail;
 
             return true;
         }
@@ -110,6 +114,7 @@ internal sealed class AppConfiguration : IAppConfiguration
     {
         this.CurrentCulture = this.GetDefaultCulture();
         this.CurrentTheme = this.GetDefaultTheme();
+        this.ArticleDetail = EArticleDetail.Any;
     }
 
     public async Task SaveAsync()
@@ -118,6 +123,7 @@ internal sealed class AppConfiguration : IAppConfiguration
         {
             AppLanguage = this.CurrentCulture.Name,
             Theme = this.CurrentTheme,
+            ArticleDetail = this.ArticleDetail
         };
         await _userPreferenceRepository.SaveAsync(preferences).ConfigureAwait(false);
     }

@@ -12,4 +12,7 @@ public sealed record PagePropertyDto
 
     [JsonPropertyName("defaultsort")]
     public string? DefaultSort { get; init; }
+
+    [JsonPropertyName("disambiguation")]
+    public string? Disambiguation { get; init; }
 }

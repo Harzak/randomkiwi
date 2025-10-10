@@ -6,6 +6,9 @@ namespace randomkiwi.ViewModels;
 public sealed partial class BookmarksViewModel : BaseRoutableViewModel
 {
     public override string Name => nameof(BookmarksViewModel);
+
+    /// <inheritdoc/>
+    public override bool CanBeConfigured => true;
     
     [ObservableProperty]
     private List<BookmarkModel> _bookmarks;
