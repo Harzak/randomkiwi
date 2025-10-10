@@ -223,7 +223,7 @@ public class HttpService : IHttpService, IDisposable
 
     private void SetUserAgent(string name)
     {
-        if (!string.IsNullOrEmpty(name))
+        if (!string.IsNullOrWhiteSpace(name))
         {
             if (_httpClient.DefaultRequestHeaders.Contains(HeaderNames.UserAgent))
             {
@@ -241,7 +241,7 @@ public class HttpService : IHttpService, IDisposable
 
     private bool ToValidUri(string endpoint, out Uri? relativeUri)
     {
-        if (!string.IsNullOrEmpty(endpoint?.Trim()))
+        if (!string.IsNullOrWhiteSpace(endpoint?.Trim()))
         {
             if (Uri.IsWellFormedUriString(endpoint, UriKind.RelativeOrAbsolute))
             {

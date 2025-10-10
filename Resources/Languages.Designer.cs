@@ -106,6 +106,15 @@ namespace randomkiwi.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The language change will only be applied when the app is restarted..
+        /// </summary>
+        public static string LangAppliedAfterRestart {
+            get {
+                return ResourceManager.GetString("LangAppliedAfterRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Languages.
         /// </summary>
         public static string Language {
@@ -124,11 +133,29 @@ namespace randomkiwi.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        public static string Ok {
+            get {
+                return ResourceManager.GetString("Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to randomkiwi.
         /// </summary>
         public static string randomkiwi {
             get {
                 return ResourceManager.GetString("randomkiwi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart the app.
+        /// </summary>
+        public static string RestartApp {
+            get {
+                return ResourceManager.GetString("RestartApp", resourceCulture);
             }
         }
         

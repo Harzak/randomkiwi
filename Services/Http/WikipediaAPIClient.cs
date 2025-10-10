@@ -30,7 +30,7 @@ internal sealed class WikipediaAPIClient : HttpService, IWikipediaAPIClient
         string endpoint = String.Format(CultureInfo.InvariantCulture, WikipediaEndpoint.ENDPOINT_FORMAT_QUERY_PAGEPROPS, grnamespace, limit);
         OperationResult<string> response = await base.GetAsync(endpoint, cancellationToken).ConfigureAwait(false);
 
-        if (response != null && response.IsSuccess && !string.IsNullOrEmpty(response.Content))
+        if (response != null && response.IsSuccess && !string.IsNullOrWhiteSpace(response.Content))
         {
             ResultDto? wikipediaResult;
             try

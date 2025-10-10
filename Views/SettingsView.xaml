@@ -54,7 +54,8 @@
         </Border>
     </VerticalStackLayout>
 
-    <popup:SfPopup x:Name="popup" AppearanceMode="OneButton" HeaderTitle="Restart the app"
+    <popup:SfPopup x:Name="popup" AppearanceMode="OneButton"
+                   HeaderTitle="{x:Static res:Languages.RestartApp}"
                    HeightRequest="220" ShowHeader="True">
         <popup:SfPopup.PopupStyle>
             <popup:PopupStyle HeaderTextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" PopupBackground="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}" />
@@ -63,10 +64,11 @@
             <DataTemplate>
                 <VerticalStackLayout Padding="20">
                     <Label Margin="0,0,0,20" FontFamily="OpenSansRegular" FontSize="14"
-                           HorizontalTextAlignment="Center" Text="The language change will only be applied when the app is restarted."
+                           HorizontalTextAlignment="Center"
+                           Text="{x:Static res:Languages.LangAppliedAfterRestart}"
                            TextColor="{AppThemeBinding Light={StaticResource Black},
                                                        Dark={StaticResource White}}" />
-                    <Button Clicked="ClosePopup_Clicked" Text="Ok" TextTransform="Uppercase" />
+                    <Button Clicked="ClosePopup_Clicked" Text="{x:Static res:Languages.Ok}" TextTransform="Uppercase" />
                 </VerticalStackLayout>
             </DataTemplate>
         </popup:SfPopup.ContentTemplate>

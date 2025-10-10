@@ -21,7 +21,7 @@
     <!--  Error messages  -->
     <Label Grid.Row="0" Grid.Column="0" HorizontalOptions="Center"
            IsVisible="{Binding IsInError}"
-           Text="Some error occured"
+           Text="{Binding ErrorMessage}"
            TextColor="{StaticResource Red}"
            VerticalOptions="Center" />
 

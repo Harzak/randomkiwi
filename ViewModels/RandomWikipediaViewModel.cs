@@ -11,7 +11,7 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
     private readonly ILoadingService _loadingService;
 
     public override string Name => nameof(RandomWikipediaViewModel);
-    public bool IsInError => !string.IsNullOrEmpty(this.ErrorMessage);
+    public bool IsInError => !string.IsNullOrWhiteSpace(this.ErrorMessage);
     public bool IsLoaded => !this.IsLoading && !this.IsInError;
     public bool CanGoNext => !this.IsLoading;
     public bool CanGoPrevious => !this.IsLoading && base.NavigationService.CanNavigateBackPage;
@@ -71,7 +71,11 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
 
     private async Task ExecuteWithLoadingAsync(Func<Task<OperationResult>> operation)
     {
-        this.ErrorMessage = null;
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            this.ErrorMessage = null;
+        });
+
         using IDisposable loadingToken = _loadingService.BeginLoading();
 
         OperationResult result = await operation().ConfigureAwait(false);
@@ -92,7 +96,10 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
 
     private void OnIsLoadingChanged(object? sender, LoadingChangedEventArgs e)
     {
-        this.IsLoading = e.IsLoading;
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            this.IsLoading = e.IsLoading;
+        });
     }
 
     private bool _disposed;

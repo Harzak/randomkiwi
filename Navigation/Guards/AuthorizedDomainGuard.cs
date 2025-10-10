@@ -16,7 +16,7 @@ public sealed class AuthorizedDomainGuard : INavigationGuard
     {
         ArgumentNullException.ThrowIfNull(to);
 
-        if (string.IsNullOrEmpty(to.UrlPath))
+        if (string.IsNullOrWhiteSpace(to.UrlPath))
         {
             return Task.FromResult(NavigationGuardResult.Allow());
         }

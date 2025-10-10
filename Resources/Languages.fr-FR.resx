@@ -132,14 +132,23 @@
   <data name="Home" xml:space="preserve">
     <value>Accueil</value>
   </data>
+  <data name="LangAppliedAfterRestart" xml:space="preserve">
+    <value>Le changement de langue ne sera appliqué qu'au redémarrage de l'application.</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Langue</value>
   </data>
   <data name="NoBookmarksAvailable" xml:space="preserve">
     <value>Aucun signet disponible.</value>
   </data>
+  <data name="Ok" xml:space="preserve">
+    <value>Ok</value>
+  </data>
   <data name="randomkiwi" xml:space="preserve">
     <value>randomkiwi</value>
+  </data>
+  <data name="RestartApp" xml:space="preserve">
+    <value>Redémarrer  l'application</value>
   </data>
   <data name="SelectAppColor" xml:space="preserve">
     <value>Sélectionnez la palette de couleurs de l'application.</value>
