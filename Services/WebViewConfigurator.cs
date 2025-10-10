@@ -22,7 +22,7 @@ public sealed class WebViewConfigurator : IWebViewConfigurator
 
         CookieContainer cookieContainer = new();
         string languageCode = _appConfig.LanguageCode;
-        string themeCode = _appConfig.CurrentTheme == AppTheme.Unspecified ? WikipediaWebConsts.COOKIE_THEME_CLIENT_VALUE_NIGHT : WikipediaWebConsts.COOKIE_THEME_CLIENT_VALUE_LIGHT;
+        string themeCode = _appConfig.GetEffectiveThemeCode() == AppTheme.Dark ? WikipediaWebConsts.COOKIE_THEME_CLIENT_VALUE_NIGHT : WikipediaWebConsts.COOKIE_THEME_CLIENT_VALUE_LIGHT;
 
         Cookie cookie = new()
         {

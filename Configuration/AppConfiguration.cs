@@ -131,5 +131,18 @@ internal sealed class AppConfiguration : IAppConfiguration
     {
         return Application.Current?.UserAppTheme ?? AppTheme.Unspecified;
     }
+
+    /// <inheritdoc/>
+    public AppTheme GetEffectiveThemeCode()
+    {
+        if (this.CurrentTheme == AppTheme.Unspecified)
+        {
+            return Application.Current?.RequestedTheme ?? AppTheme.Light;
+        }
+        else
+        {
+            return this.CurrentTheme;
+        }
+    }
 }
 

@@ -29,4 +29,9 @@ public interface IAppConfiguration
 
     Task InitializeAsync();
     Task SaveAsync();
+
+    /// <summary>
+    /// Determines the effective theme to be used by the application.
+    /// </summary>
+    AppTheme GetEffectiveThemeCode();
 }
