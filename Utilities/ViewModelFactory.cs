@@ -7,14 +7,6 @@ using System.Threading.Tasks;
 
 namespace randomkiwi.Utilities;
 
-public interface IViewModelFactory
-{
-    IRoutableViewModel CreateBookmarkViewModel(Bookmark bookmark);
-    IRoutableViewModel CreateRandomArticleViewModel();
-    IRoutableViewModel CreateBookmarkListViewModel();
-    IRoutableViewModel CreateSettingsViewModel();
-}
-
 public sealed class ViewModelFactory : IViewModelFactory
 {
     private readonly ILoadingService _loadingService;
