@@ -2,7 +2,6 @@
 <Grid x:Class="randomkiwi.Views.SettingsView"
       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-      xmlns:popup="clr-namespace:Syncfusion.Maui.Toolkit.Popup;assembly=Syncfusion.Maui.Toolkit"
       xmlns:res="clr-namespace:randomkiwi.Resources"
       xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
       xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
@@ -21,8 +20,7 @@
                 <Picker Grid.Row="0" Grid.Column="1"
                         ItemDisplayBinding="{Binding NativeName}"
                         ItemsSource="{Binding AppConfig.SupportedCultures}"
-                        SelectedIndexChanged="SelectedCultureIndexChanged"
-                        SelectedItem="{Binding AppConfig.CurrentCulture}" />
+                        SelectedItem="{Binding SelectedCulture}" />
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                        Margin="0,10,0,0"
                        Style="{StaticResource Subtitle}"
@@ -40,8 +38,7 @@
                        Text="{x:Static res:Languages.Appearance}" />
                 <Picker Grid.Row="0" Grid.Column="1"
                         ItemsSource="{Binding AppConfig.AvailableThemes}"
-                        SelectedIndexChanged="SelectedThemeIndexChanged"
-                        SelectedItem="{Binding AppConfig.CurrentTheme}" />
+                        SelectedItem="{Binding SelectedTheme}" />
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                        Margin="0,10,0,0"
                        Style="{StaticResource Subtitle}"
@@ -49,25 +46,5 @@
             </Grid>
         </Border>
     </VerticalStackLayout>
-
-    <popup:SfPopup x:Name="popup" AppearanceMode="OneButton"
-                   HeaderTitle="{x:Static res:Languages.RestartApp}"
-                   HeightRequest="220" ShowHeader="True">
-        <popup:SfPopup.PopupStyle>
-            <popup:PopupStyle HeaderTextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" PopupBackground="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}" />
-        </popup:SfPopup.PopupStyle>
-        <popup:SfPopup.ContentTemplate>
-            <DataTemplate>
-                <VerticalStackLayout Padding="20">
-                    <Label Margin="0,0,0,20" FontFamily="OpenSansRegular" FontSize="14"
-                           HorizontalTextAlignment="Center"
-                           Text="{x:Static res:Languages.LangAppliedAfterRestart}"
-                           TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                       Dark={StaticResource White}}" />
-                    <Button Clicked="ClosePopup_Clicked" Text="{x:Static res:Languages.Ok}" TextTransform="Uppercase" />
-                </VerticalStackLayout>
-            </DataTemplate>
-        </popup:SfPopup.ContentTemplate>
-    </popup:SfPopup>
 
 </Grid>
