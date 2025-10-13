@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,14 +17,13 @@ public interface IViewModelFactory
 
 public sealed class ViewModelFactory : IViewModelFactory
 {
-    private readonly IArticleCatalog _articleCatalog;
     private readonly ILoadingService _loadingService;
-    private readonly IBookmarksRepository _bookmarksRepository;
-    private readonly IAppConfiguration _appConfiguration;
     private readonly INavigationService _navigationService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly WikipediaWebViewViewModel _webViewViewModel;
 
     public ViewModelFactory(
+        IServiceProvider serviceProvider,
         IBookmarksRepository bookmarksRepository,
         ILoadingService loadingService,
         INavigationService navigationService,
@@ -31,12 +31,10 @@ public sealed class ViewModelFactory : IViewModelFactory
         IAppConfiguration appConfiguration,
         WikipediaWebViewViewModel webViewViewModel)
     {
-        _bookmarksRepository = bookmarksRepository ?? throw new ArgumentNullException(nameof(bookmarksRepository));
         _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
-        _articleCatalog = articleCatalog ?? throw new ArgumentNullException(nameof(articleCatalog));
-        _appConfiguration = appConfiguration ?? throw new ArgumentNullException(nameof(appConfiguration));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
     public IRoutableViewModel CreateBookmarkViewModel(Bookmark bookmark)
@@ -46,16 +44,16 @@ public sealed class ViewModelFactory : IViewModelFactory
 
     public IRoutableViewModel CreateRandomArticleViewModel()
     {
-        return new RandomArticleViewModel(_webViewViewModel, _articleCatalog, _loadingService, _navigationService, _bookmarksRepository, _appConfiguration);
+        return _serviceProvider.GetRequiredService<RandomArticleViewModel>();
     }
 
     public IRoutableViewModel CreateBookmarkListViewModel()
     {
-        return new BookmarkListViewModel(_navigationService, _bookmarksRepository, this);
+        return _serviceProvider.GetRequiredService<BookmarkListViewModel>();
     }
 
     public IRoutableViewModel CreateSettingsViewModel()
     {
-        return new SettingsViewModel(_appConfiguration, _navigationService);
+        return _serviceProvider.GetRequiredService<SettingsViewModel>();
     }
 }
