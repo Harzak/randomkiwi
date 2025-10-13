@@ -14,9 +14,9 @@ public record HttpClientOption : IHttpClientOption
     /// <inheritdoc />
     public string UserAgent { get; init; }
 
-    public HttpClientOption(string name)
+    public HttpClientOption(string name, string userAgent)
     {
         this.Name = name;
-        this.UserAgent = HttpClientConsts.HTTPCLIENT_NAME_DEFAULT;
+        this.UserAgent = userAgent;
     }
 }

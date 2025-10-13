@@ -9,13 +9,16 @@ namespace randomkiwi.Services.Http;
 /// </summary>
 internal sealed class WikipediaAPIClient : HttpService, IWikipediaAPIClient
 {
+    private readonly IAppSettingsProvider _settingsProvider;
+
     public WikipediaAPIClient(
         IHttpClientFactory httpClientFactory,
         IHttpClientOptionFactory httpClientOptionFactory,
+        IAppSettingsProvider settingsProvider,
         ILogger<WikipediaAPIClient> logger)
-    : base(httpClientFactory, DateTimeFacade.Default, httpClientOptionFactory, logger)
+    : base(httpClientFactory, DateTimeFacade.Default, httpClientOptionFactory, settingsProvider, logger)
     {
-
+        _settingsProvider = settingsProvider;
     }
 
     /// <inheritdoc />
@@ -26,7 +29,7 @@ internal sealed class WikipediaAPIClient : HttpService, IWikipediaAPIClient
     {
         OperationResultList<PageDto> result = new();
 
-        string endpoint = String.Format(CultureInfo.InvariantCulture, WikipediaEndpoint.ENDPOINT_FORMAT_QUERY_PAGEPROPS, grnamespace, limit);
+        string endpoint = String.Format(CultureInfo.InvariantCulture, _settingsProvider.Wikipedia.QueryEndpointFormat, grnamespace, limit);
         OperationResult<string> response = await base.GetAsync(endpoint, cancellationToken).ConfigureAwait(false);
 
         if (response != null && response.IsSuccess && !string.IsNullOrWhiteSpace(response.Content))

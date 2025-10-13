@@ -6,16 +6,18 @@ namespace randomkiwi.Services.Http;
 internal sealed class WikipediaUrlBuilder : IWikipediaUrlBuilder
 {
     private readonly IAppConfiguration _appConfiguration;
+    private readonly IAppSettingsProvider _settingsProvider;
 
-    public WikipediaUrlBuilder(IAppConfiguration appConfiguration)
+    public WikipediaUrlBuilder(IAppConfiguration appConfiguration, IAppSettingsProvider settingsProvider)
     {
         _appConfiguration = appConfiguration;
+        _settingsProvider = settingsProvider;
     }
 
     /// <inheritdoc />
     public Uri BuildBaseUri()
     {
-        string uriStr = string.Format(CultureInfo.InvariantCulture, WikipediaEndpoint.URL_FORMAT, _appConfiguration.LanguageCode);
+        string uriStr = string.Format(CultureInfo.InvariantCulture, _settingsProvider.Wikipedia.UrlFormat, _appConfiguration.LanguageCode);
         return new Uri(uriStr);
     }
 

@@ -7,14 +7,12 @@ namespace randomkiwi.Services;
 /// </summary>
 internal sealed class WikipediaArticleCatalog : IArticleCatalog
 {
-    private const int POOL_THRESHOLD = 20;
-    private const int CATALOG_THRESHOLD = 20;
-
     private readonly ILogger _logger;
     private readonly IWikipediaAPIClient _apiClient;
     private readonly IWikipediaUrlBuilder _urlBuilder;
     private readonly IUserMetricsService _userMetricsService;
     private readonly IAppConfiguration _appConfiguration;
+    private readonly IAppSettingsProvider _settingsProvider;
 
     private readonly Queue<WikipediaArticleMetadata> _pool;
     private readonly List<WikipediaArticleMetadata> _catalog;
@@ -28,12 +26,14 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         IWikipediaUrlBuilder urlBuilder,
         IUserMetricsService userMetricsService,
         IAppConfiguration appConfiguration,
+        IAppSettingsProvider settingsProvider,
         ILogger<WikipediaArticleCatalog> logger)
     {
         _apiClient = apiClient;
         _urlBuilder = urlBuilder;
         _userMetricsService = userMetricsService;
         _appConfiguration = appConfiguration;
+        _settingsProvider = settingsProvider;
         _logger = logger;
         _lock = new Lock();
         _pool = [];
@@ -122,7 +122,7 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
     {
         lock (_lock)
         {
-            if (_catalog.Count > CATALOG_THRESHOLD)
+            if (_catalog.Count > _settingsProvider.ArticleCatalog.CatalogThreshold)
             {
                 _catalog.RemoveAt(0);
             }
@@ -143,8 +143,13 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         return null;
     }
 
-    private async Task<OperationResult> FeedPoolAsync(int targetPoolSize = POOL_THRESHOLD)
+    private async Task<OperationResult> FeedPoolAsync(int targetPoolSize = -1)
     {
+        if (targetPoolSize == -1)
+        {
+            targetPoolSize = _settingsProvider.ArticleCatalog.PoolThreshold;
+        }
+            
         OperationResult result = new();
         int added = 0;
 

@@ -5,13 +5,12 @@
 /// </summary>
 internal sealed class UserMetricsService : IUserMetricsService
 {
-    private const int MAX_RECENT_NAVIGATIONS = 20;
-    private const int BASE_SIZE_POOL = 20;
-
+    private readonly IAppSettingsProvider _settingsProvider;
     private readonly UserSessionMetrics _sessionMetrics;
 
-    public UserMetricsService()
+    public UserMetricsService(IAppSettingsProvider settingsProvider)
     {
+        _settingsProvider = settingsProvider;
         _sessionMetrics = new UserSessionMetrics();
     }
 
@@ -42,7 +41,7 @@ internal sealed class UserMetricsService : IUserMetricsService
 
         _sessionMetrics.RecentNavigations.Enqueue(navigationEvent);
 
-        while (_sessionMetrics.RecentNavigations.Count > MAX_RECENT_NAVIGATIONS)
+        while (_sessionMetrics.RecentNavigations.Count > _settingsProvider.UserMetrics.MaxRecentNavigations)
         {
             _sessionMetrics.RecentNavigations.Dequeue();
         }
@@ -78,10 +77,10 @@ internal sealed class UserMetricsService : IUserMetricsService
 
         return pattern switch
         {
-            EUserNavigationPattern.Reviewer => BASE_SIZE_POOL, // Standard size is fine
-            EUserNavigationPattern.Explorer => (int)(BASE_SIZE_POOL * 1.5), // Moderate increase
-            EUserNavigationPattern.Reader => BASE_SIZE_POOL * 2, // Needs more forward articles
-            _ => BASE_SIZE_POOL
+            EUserNavigationPattern.Reviewer => _settingsProvider.UserMetrics.BaseSizePool, // Standard size is fine
+            EUserNavigationPattern.Explorer => (int)(_settingsProvider.UserMetrics.BaseSizePool * 1.5), // Moderate increase
+            EUserNavigationPattern.Reader => _settingsProvider.UserMetrics.BaseSizePool * 2, // Needs more forward articles
+            _ => _settingsProvider.UserMetrics.BaseSizePool
         };
     }
 

@@ -59,11 +59,12 @@
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent.Filled" Version="5.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.110" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
@@ -80,6 +81,9 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Scripts\wikipedia-article-ui-formatting.js" />
+	  <Content Include="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 	
 	<ItemGroup>

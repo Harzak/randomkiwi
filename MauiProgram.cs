@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Maui;
 using MauiIcons.Fluent.Filled;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
+using System.Reflection;
 
 namespace randomkiwi;
 
@@ -22,6 +24,8 @@ public static class MauiProgram
                 fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
                 fonts.AddFont("FluentSystemIcons-Regular.ttf", Fonts.FluentUI.FontFamily);
             });
+
+        builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 #if DEBUG
         builder.Logging.AddDebug();

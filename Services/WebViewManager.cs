@@ -11,6 +11,7 @@ public sealed class WebViewManager : IWebViewManager
     private readonly IWebViewConfigurator _webViewConfigurator;
     private readonly ILoadingService _loadingService;
     private readonly IScriptLoader _scriptLoader;
+    private readonly IAppSettingsProvider _settingsProvider;
     private readonly ILogger<WebViewManager> _logger;
 
     private bool _isNavigated;
@@ -23,11 +24,13 @@ public sealed class WebViewManager : IWebViewManager
         IWebViewConfigurator webViewConfigurator,
         ILoadingService loadingService,
         IScriptLoader scriptLoader,
+        IAppSettingsProvider settingsProvider,
         ILogger<WebViewManager> logger)
     {
         _webViewConfigurator = webViewConfigurator ?? throw new ArgumentNullException(nameof(webViewConfigurator));
         _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
         _scriptLoader = scriptLoader ?? throw new ArgumentNullException(nameof(scriptLoader));
+        _settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -114,7 +117,7 @@ public sealed class WebViewManager : IWebViewManager
 
     private async Task EvaluateEmbeddedPageScriptAsync()
     {
-        string uiFormattingScriptContent = _scriptLoader.Load(AppConsts.SCRIPT_UI_FORMATTING_FILENAME);
+        string uiFormattingScriptContent = _scriptLoader.Load(_settingsProvider.App.ScriptUIFormattingFilename);
         await EvaluateJavaScriptAsync(uiFormattingScriptContent).ConfigureAwait(false);
     }
 

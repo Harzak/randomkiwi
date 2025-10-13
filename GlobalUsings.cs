@@ -15,3 +15,4 @@ global using randomkiwi.Services;
 global using randomkiwi.Utilities;
 global using randomkiwi.Utilities.Results;
 global using randomkiwi.ViewModels;
+global using randomkiwi.Configuration.Models;

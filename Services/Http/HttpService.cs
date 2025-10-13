@@ -39,9 +39,10 @@ public class HttpService : IHttpService, IDisposable
     public HttpService(IHttpClientFactory httpClientFactory,
         IDateTimeFacade timeProvider,
         IHttpClientOptionFactory httpClientOptionFactory,
+        IAppSettingsProvider settingsProvider,
         ILogger<HttpService> logger)
 
-        : this(httpClientFactory?.CreateClient(HttpClientConsts.HTTPCLIENT_NAME_DEFAULT) ?? throw new ArgumentNullException(nameof(httpClientFactory)),
+        : this(httpClientFactory?.CreateClient(settingsProvider?.HttpClient?.DefaultClientName ?? "default") ?? throw new ArgumentNullException(nameof(httpClientFactory)),
               timeProvider,
                 httpClientOptionFactory,
               logger)

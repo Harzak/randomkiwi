@@ -9,12 +9,12 @@ namespace randomkiwi.Utilities;
 /// </summary>
 internal sealed class ScriptLoader : IScriptLoader
 {
-    private const string SCRIPT_NAMESPACE = "Scripts";
-
+    private readonly IAppSettingsProvider _settingsProvider;
     private readonly Dictionary<string, string> _cache;
 
-    public ScriptLoader()
+    public ScriptLoader(IAppSettingsProvider settingsProvider)
     {
+        _settingsProvider = settingsProvider;
         _cache = [];
     }
 
@@ -25,7 +25,7 @@ internal sealed class ScriptLoader : IScriptLoader
         string resourceName = String.Format(CultureInfo.InvariantCulture,
             "{0}.{1}.{2}.js",
             assembly.GetName().Name,
-            SCRIPT_NAMESPACE,
+            _settingsProvider.App.ScriptNamespace,
             scriptName);
 
         if (_cache.TryGetValue(resourceName, out var cached))
