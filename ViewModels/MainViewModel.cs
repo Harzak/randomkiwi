@@ -10,7 +10,7 @@ namespace randomkiwi.ViewModels;
 public sealed partial class MainViewModel : ObservableObject
 {
     private readonly INavigationService _navigationService;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IViewModelFactory _viewModelFactory;
 
     /// <inheritdoc/>
     public bool CanOpenOverflowMenu => this.CurrentViewModel?.CanBeConfigured ?? false;
@@ -22,9 +22,9 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isFlyoutPresented;
 
-    public MainViewModel(IServiceProvider serviceProvider, INavigationService navigationService)
+    public MainViewModel(IViewModelFactory viewModelFactory, INavigationService navigationService)
     {
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _viewModelFactory = viewModelFactory ?? throw new ArgumentNullException(nameof(viewModelFactory));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
         _navigationService.CurrentViewModelChanged += OnCurrentViewModelChanged;
@@ -41,7 +41,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToHomeAsync()
     {
-        IRoutableViewModel mainViewModel = _serviceProvider.GetRequiredService<RandomArticleViewModel>();
+        IRoutableViewModel mainViewModel = _viewModelFactory.CreateRandomArticleViewModel();
         await _navigationService.NavigateToAsync(mainViewModel).ConfigureAwait(false);
         IsFlyoutPresented = false;
     }
@@ -49,7 +49,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToBookmarksAsync()
     {
-        IRoutableViewModel bookmarksViewModel = _serviceProvider.GetRequiredService<BookmarkListViewModel>();
+        IRoutableViewModel bookmarksViewModel = _viewModelFactory.CreateBookmarkListViewModel();
         await _navigationService.NavigateToAsync(bookmarksViewModel).ConfigureAwait(false);
         IsFlyoutPresented = false;
     }
@@ -57,7 +57,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToSettingsAsync()
     {
-        IRoutableViewModel settingsViewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
+        IRoutableViewModel settingsViewModel = _viewModelFactory.CreateSettingsViewModel();
         await _navigationService.NavigateToAsync(settingsViewModel).ConfigureAwait(false);
         IsFlyoutPresented = false;
     }

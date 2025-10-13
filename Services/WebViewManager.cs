@@ -143,7 +143,6 @@ public sealed class WebViewManager : IWebViewManager
             if (disposing)
             {
                 _loadingToken?.Dispose();
-                _loadingService?.Dispose();
                 if (_webView != null)
                 {
                     _webView.Navigating -= OnWebViewNavigating;
