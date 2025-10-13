@@ -24,11 +24,7 @@
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WindowsPackageType>None</WindowsPackageType>
-		
-		<!-- Enable compiled bindings with Source property -->
-		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
-		
+		<WindowsPackageType>None</WindowsPackageType>		
 		<ApplicationTitle>randomkiwi</ApplicationTitle>
 		<ApplicationId>com.companyname.randomkiwi</ApplicationId>
 
@@ -84,9 +80,9 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Scripts\wikipedia-article-ui-formatting.js" />
-	  <Content Include="appsettings.json">
+	  <EmbeddedResource Include="appsettings.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>

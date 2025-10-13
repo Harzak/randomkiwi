@@ -2,10 +2,11 @@
 <Grid x:Class="randomkiwi.Views.SettingsView"
       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
       xmlns:res="clr-namespace:randomkiwi.Resources"
+      xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
       xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
       xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
-      xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
       x:DataType="viewModels:SettingsViewModel">
 
     <VerticalStackLayout Margin="10,0">
@@ -14,7 +15,7 @@
         <Label Margin="5,10" Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.Language}" />
         <Border Style="{StaticResource SectionBorder}">
 
-            <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto" x:DataType="viewModels:SettingsViewModel">
+            <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" Grid.Column="0"
                        Style="{StaticResource Header3}"
                        Text="{x:Static res:Languages.AppLanguage}" />
@@ -33,7 +34,7 @@
         <Label Margin="5,30,0,10" Style="{StaticResource Subtitle}" Text="{x:Static res:Languages.Display}" />
         <Border Style="{StaticResource SectionBorder}">
 
-            <Grid ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto" x:DataType="viewModels:SettingsViewModel">
+            <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="*, 150" RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" Grid.Column="0"
                        Style="{StaticResource Header3}"
                        Text="{x:Static res:Languages.Appearance}" />

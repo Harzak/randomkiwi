@@ -25,7 +25,12 @@ public static class MauiProgram
                 fonts.AddFont("FluentSystemIcons-Regular.ttf", Fonts.FluentUI.FontFamily);
             });
 
-        builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("randomkiwi.appsettings.json");
+        if (stream != null)
+        {
+            builder.Configuration.AddJsonStream(stream);
+        }
 
 #if DEBUG
         builder.Logging.AddDebug();

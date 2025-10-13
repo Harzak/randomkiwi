@@ -19,9 +19,7 @@
 
                             <Grid Padding="10">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:BookmarkListViewModel}}, Path=OpenBookmarkCommand}" 
-                                                          CommandParameter="{Binding .}"
-                                                          x:DataType="viewModels:BookmarkListViewModel" />
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:BookmarkListViewModel}}, Path=OpenBookmarkCommand}" CommandParameter="{Binding .}" />
                                 </Grid.GestureRecognizers>
                                 <Border Style="{StaticResource SectionBorder}">
 
