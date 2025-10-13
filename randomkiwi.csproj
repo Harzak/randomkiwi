@@ -26,6 +26,9 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WindowsPackageType>None</WindowsPackageType>
 		
+		<!-- Enable compiled bindings with Source property -->
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+		
 		<ApplicationTitle>randomkiwi</ApplicationTitle>
 		<ApplicationId>com.companyname.randomkiwi</ApplicationId>
 
