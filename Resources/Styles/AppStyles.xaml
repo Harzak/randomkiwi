@@ -2,6 +2,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:f="clr-namespace:randomkiwi.Fonts"
+                    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
                     xmlns:pullToRefresh="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
                     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit">
 
@@ -47,6 +48,12 @@
     <FontImageSource x:Key="IconBookmark"
                      FontFamily="{x:Static f:FluentUI.FontFamily}"
                      Glyph="{x:Static f:FluentUI.bookmark_32_regular}"
+                     Size="{StaticResource size240}"
+                     Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
+                                             Dark={StaticResource LightOnDarkBackground}}" />
+
+    <FontImageSource x:Key="IconBookmarkFilled" FontFamily="FluentFilledIcons"
+                     Glyph="{x:Static f:FluentUI.bookmark_32_filled}"
                      Size="{StaticResource size240}"
                      Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground},
                                              Dark={StaticResource LightOnDarkBackground}}" />

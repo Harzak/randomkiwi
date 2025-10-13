@@ -26,3 +26,8 @@ internal sealed record ShowWikipediaRandomSettingsPopupMessage(ObservableObject 
 /// Represents a message used to signal the closure of a popup related to Wikipedia random settings.
 /// </summary>
 internal sealed record ClosePopupWikipediaRandomSettingsMessage();
+
+/// <summary>
+/// Represents a notification to be displayed in the UI.
+/// </summary>
+internal sealed record ShowNotification(string Message, EAlertLevel Level, int DurationMs = 5000);

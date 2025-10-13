@@ -31,6 +31,8 @@ public partial class MainView : ContentPage
             });
         });
 
+        WeakReferenceMessenger.Default.Register<ShowNotification>(this, ShowNotification);
+
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
@@ -48,11 +50,11 @@ public partial class MainView : ContentPage
     {
         if (e.PropertyName == nameof(MainViewModel.CurrentViewModel))
         {
-            UpdateContent();
+            UpdateMainContent();
         }
     }
 
-    private void UpdateContent()
+    private void UpdateMainContent()
     {
         if (_viewModel?.CurrentViewModel == null)
         {
@@ -75,6 +77,33 @@ public partial class MainView : ContentPage
         });
     }
 
+    private async void ShowNotification(object recipient, ShowNotification e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            NotificationLabel.Text = e.Message;
+            NotificationContainer.IsVisible = true;
+            NotificationContainer.Opacity = 0;
+            NotificationContainer.BackgroundColor = e.Level switch
+            {
+                EAlertLevel.Info => (Color)Application.Current!.Resources["InfoBlue"],
+                EAlertLevel.Success => (Color)Application.Current!.Resources["SuccessGreen"],
+                EAlertLevel.Warning => (Color)Application.Current!.Resources["WarningOrange"],
+                EAlertLevel.Error => (Color)Application.Current!.Resources["ErrorRed"],
+                _ => (Color)Application.Current!.Resources["InfoBlue"]
+            };
+        });
+  
+        await NotificationContainer.FadeTo(1, 500).ConfigureAwait(false);
+        await Task.Delay(e.DurationMs).ConfigureAwait(false);
+        await NotificationContainer.FadeTo(0, 500).ConfigureAwait(false);
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            NotificationContainer.IsVisible = false;
+        });
+    }
+
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
@@ -83,5 +112,6 @@ public partial class MainView : ContentPage
         {
             _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         }
+        WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 }

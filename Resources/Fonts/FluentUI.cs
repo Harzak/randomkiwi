@@ -887,6 +887,11 @@ namespace randomkiwi.Fonts
         public const string bookmark_24_regular = "\uf1f6";
         public const string bookmark_28_regular = "\uf1f7";
         public const string bookmark_32_regular = "\ue191";
+        public const string bookmark_16_filled = "\uf1f5";
+        public const string bookmark_20_filled = "\uf1f6";
+        public const string bookmark_24_filled = "\uf1f7";
+        public const string bookmark_28_filled = "\uf1f8";
+        public const string bookmark_32_filled = "\ue1a5";
         public const string bookmark_add_20_regular = "\uf1e8";
         public const string bookmark_add_24_regular = "\uf1e9";
         public const string bookmark_multiple_16_regular = "\ue192";

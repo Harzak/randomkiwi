@@ -88,6 +88,15 @@ namespace randomkiwi.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bookmark added.
+        /// </summary>
+        public static string BookmarkAdded {
+            get {
+                return ResourceManager.GetString("BookmarkAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bookmarks.
         /// </summary>
         public static string Bookmarks {
@@ -255,6 +264,15 @@ namespace randomkiwi.Resources {
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error.
+        /// </summary>
+        public static string UnknownError {
+            get {
+                return ResourceManager.GetString("UnknownError", resourceCulture);
             }
         }
     }

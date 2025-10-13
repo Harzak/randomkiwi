@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using MauiIcons.Fluent.Filled;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
 
@@ -13,6 +14,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
             .ConfigureSyncfusionToolkit()
+            .UseFluentFilledMauiIcons()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -31,6 +33,4 @@ public static class MauiProgram
 
         return builder.Build();
     }
-
-
 }

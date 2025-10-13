@@ -36,14 +36,12 @@
         <ImageButton Margin="20,0" Aspect="Center"
                      Command="{Binding PreviousArticleCommand}"
                      HeightRequest="44" HorizontalOptions="End"
-                     IsEnabled="{Binding CanGoPrevious}"
                      Source="{StaticResource IconGoBack}"
                      VerticalOptions="Center" WidthRequest="44" />
 
         <ImageButton Margin="20,0" Aspect="Center"
                      Command="{Binding NextArticleCommand}"
                      HeightRequest="44" HorizontalOptions="End"
-                     IsEnabled="{Binding CanGoNext}"
                      Source="{StaticResource IconRefresh}"
                      VerticalOptions="Center" WidthRequest="44" />
 
@@ -51,7 +49,16 @@
                      Command="{Binding AddBookmarkCommand}"
                      HeightRequest="44" HorizontalOptions="End"
                      Source="{StaticResource IconBookmark}"
-                     VerticalOptions="Center" WidthRequest="44" />
+                     VerticalOptions="Center" WidthRequest="44">
+            <ImageButton.Triggers>
+                <DataTrigger Binding="{Binding IsCurrentArticleBookmarked}" TargetType="ImageButton" Value="True">
+                    <Setter Property="Source" Value="{StaticResource IconBookmarkFilled}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsCurrentArticleBookmarked}" TargetType="ImageButton" Value="False">
+                    <Setter Property="Source" Value="{StaticResource IconBookmark}" />
+                </DataTrigger>
+            </ImageButton.Triggers>
+        </ImageButton>
 
     </HorizontalStackLayout>
 </Grid>

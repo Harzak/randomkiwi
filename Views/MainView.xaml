@@ -38,6 +38,13 @@
 
             <!--  Main Content  -->
             <ContentView x:Name="ContentArea" Grid.Row="1" />
+
+            <!--  Notification overlay container  -->
+            <Border x:Name="NotificationContainer" Grid.Row="1" Margin="20"
+                    Padding="15" BackgroundColor="Black" HorizontalOptions="Center"
+                    IsVisible="False" StrokeShape="RoundRectangle 8" VerticalOptions="Start">
+                <Label x:Name="NotificationLabel" TextColor="White" />
+            </Border>
         </Grid>
 
         <!--  Flyout Menu Overlay  -->

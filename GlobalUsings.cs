@@ -11,3 +11,5 @@ global using randomkiwi.ViewModels;
 global using randomkiwi.Navigation;
 global using randomkiwi.Navigation.Context;
 global using randomkiwi.Navigation.Guards;
+global using randomkiwi.Repositories;
+global using randomkiwi.Utilities.Results;

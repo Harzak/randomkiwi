@@ -126,6 +126,9 @@
   <data name="AppLanguage" xml:space="preserve">
     <value>Langue de l'application</value>
   </data>
+  <data name="BookmarkAdded" xml:space="preserve">
+    <value>Signet ajouté</value>
+  </data>
   <data name="Bookmarks" xml:space="preserve">
     <value>Signets</value>
   </data>
@@ -182,5 +185,8 @@
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Paramètres</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Erreur inconnue </value>
   </data>
 </root>

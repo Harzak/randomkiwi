@@ -31,9 +31,4 @@ public interface IArticleCatalog : IDisposable
     /// Retrieves the next item in the sequence asynchronously.
     /// </summary>
     Task<OperationResult> NextAsync();
-
-    /// <summary>
-    /// Marks the current item as bookmarked asynchronously.
-    /// </summary>
-    Task<OperationResult> BookmarkAsync();
 }

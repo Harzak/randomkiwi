@@ -104,12 +104,6 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         return OperationResult.Failure("No previous article in the catalog.");
     }
 
-    /// <inheritdoc />
-    public Task<OperationResult> BookmarkAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     private OperationResult NextInternal()
     {
         WikipediaArticleMetadata? article = this.DequeueFromPool();

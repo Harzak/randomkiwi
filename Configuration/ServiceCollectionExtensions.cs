@@ -21,52 +21,75 @@ public static class ServiceCollectionExtensions
     /// This method registers essential services including the main view model, navigation service,
     /// and view model factory required for the core application functionality.
     /// </remarks>
-    public static void AddCoreServices(this IServiceCollection collection)
+    public static void AddCoreServices(this IServiceCollection services)
     {
-        collection.AddHttpClient();
+        services.AddHttpServices();
+        services.AddView();
+        services.AddViewModels();
+        services.AddAppServices();
+        services.AddRepositoryServices();
+    }
 
-        // Views
-        collection.AddSingleton<MainView>();
-
-        // ViewModels
-        collection.AddSingleton<MainViewModel>();
-        collection.AddSingleton<RandomWikipediaViewModel>();
-        collection.AddSingleton<SettingsViewModel>();
-        collection.AddSingleton<BookmarksViewModel>();
-        collection.AddTransient<WikipediaWebViewViewModel>();
-
-
-        // Services
-        collection.AddSingleton<IArticleCatalog, WikipediaArticleCatalog>();
-        collection.AddSingleton<IWikipediaAPIClient, WikipediaAPIClient>();
-        collection.AddSingleton<IWikipediaUrlBuilder, WikipediaUrlBuilder>();
-        collection.AddSingleton<IUserMetricsService, UserMetricsService>();
-        collection.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
-        collection.AddTransient<IWebViewManager, WebViewManager>();
-        collection.AddSingleton<IScriptLoader, ScriptLoader>();
-        collection.AddSingleton<IUserPreferenceRepository, UserPreferenceRepository>();
-        collection.AddSingleton<INavigationHandler<IRoutableViewModel>, ViewModelNavigationHandler>();
-        collection.AddSingleton<INavigationHandler<IRoutableItem>, WebPageNavigationHandler>();
-        collection.AddSingleton<IViewModelNavigationService, ViewModelNavigationService>();
-        collection.AddSingleton<IWebPageNavigationService, WebPageNavigationService>();
-        collection.AddSingleton<INavigationService, NavigationService>();
-        collection.AddSingleton<IJsonStorage<UserPreferenceModel>>(provider =>
-        {
-            var logger = provider.GetRequiredService<ILogger<JsonStorage<UserPreferenceModel>>>();
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string appDirectory = Path.Combine(appDataPath, AppConsts.APP_NAME);
-            return new JsonStorage<UserPreferenceModel>(appDirectory, AppConsts.USER_PREFERENCES_FILE, logger);
-        });
-        collection.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
-        collection.AddSingleton<IAppConfiguration, AppConfiguration>();
-        collection.AddSingleton<ILoadingService>(serviceProvider =>
+    private static void AddAppServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IArticleCatalog, WikipediaArticleCatalog>();
+        services.AddSingleton<IWikipediaAPIClient, WikipediaAPIClient>();
+        services.AddSingleton<IWikipediaUrlBuilder, WikipediaUrlBuilder>();
+        services.AddSingleton<IUserMetricsService, UserMetricsService>();
+        services.AddSingleton<IWebViewConfigurator, WebViewConfigurator>();
+        services.AddTransient<IWebViewManager, WebViewManager>();
+        services.AddSingleton<IScriptLoader, ScriptLoader>();
+        services.AddSingleton<INavigationHandler<IRoutableViewModel>, ViewModelNavigationHandler>();
+        services.AddSingleton<INavigationHandler<IRoutableItem>, WebPageNavigationHandler>();
+        services.AddSingleton<IViewModelNavigationService, ViewModelNavigationService>();
+        services.AddSingleton<IWebPageNavigationService, WebPageNavigationService>();
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IAppConfiguration, AppConfiguration>();
+        services.AddSingleton<ILoadingService>(serviceProvider =>
         {
             return new LoadingService(debounceMilliseconds: 500, minimumDisplayMilliseconds: 300);
         });
     }
 
-    private static void AddHttpClient(this IServiceCollection services)
+    private static void AddRepositoryServices(this IServiceCollection services)
     {
+        string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        string appDirectory = Path.Combine(appDataPath, AppConsts.APP_NAME);
+        services.AddSingleton<IJsonStorage<UserPreferenceModel>>(provider =>
+        {
+            return new JsonStorage<UserPreferenceModel>(
+                appDirectory, 
+                AppConsts.USER_PREFERENCES_FILE,
+                provider.GetRequiredService<ILogger<JsonStorage<UserPreferenceModel>>>());
+        });
+        services.AddSingleton<IJsonStorage<BookmarkList>>(provider =>
+        {
+            return new JsonStorage<BookmarkList>(
+                appDirectory, 
+                AppConsts.BOOKMARKS_FILE,
+                provider.GetRequiredService<ILogger<JsonStorage<BookmarkList>>>());
+        });
+        services.AddSingleton<IUserPreferenceRepository, UserPreferenceRepository>();
+        services.AddSingleton<IBookmarksRepository, BookmarksRepository>();
+    }
+
+    private static void AddView(this IServiceCollection services)
+    {
+        services.AddSingleton<MainView>();
+    }
+
+    private static void AddViewModels(this IServiceCollection services)
+    {
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<RandomWikipediaViewModel>();
+        services.AddSingleton<SettingsViewModel>();
+        services.AddSingleton<BookmarksViewModel>();
+        services.AddTransient<WikipediaWebViewViewModel>();
+    }
+
+    private static void AddHttpServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IHttpClientOptionFactory, HttpClientOptionFactory>();
         services.AddHttpClient(HttpClientConsts.HTTPCLIENT_NAME_DEFAULT)
             .ConfigurePrimaryHttpMessageHandler(CreatePlatformOptimizedHandler);
     }

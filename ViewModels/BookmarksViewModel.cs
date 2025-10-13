@@ -5,87 +5,33 @@ namespace randomkiwi.ViewModels;
 
 public sealed partial class BookmarksViewModel : BaseRoutableViewModel
 {
+    private readonly IBookmarksRepository _bookmarksRepository;
+
     public override string Name => nameof(BookmarksViewModel);
 
     /// <inheritdoc/>
     public override bool CanBeConfigured => true;
     
     [ObservableProperty]
-    private List<BookmarkModel> _bookmarks;
+    private List<Bookmark>? _bookmarks;
 
-    public BookmarksViewModel(INavigationService navigationService) : base(navigationService)
+    public BookmarksViewModel(INavigationService navigationService, IBookmarksRepository bookmarksRepository) : base(navigationService)
     {
-        _bookmarks =
-        [
-            new BookmarkModel()
-            {
-                Identifier = Guid.NewGuid(),
-                Name = "Example Bookmark 1",
-                Description = "This is an example bookmark.",
-                Url = new Uri("https://example.com/1"),
-                DateAdded = DateTimeOffset.Now.AddDays(-10)
-            },
-            new BookmarkModel()
-            {
-                Identifier = Guid.NewGuid(),
-                Name = "Example Bookmark 2",
-                Description = "This is another example bookmark.",
-                Url = new Uri("https://example.com/2"),
-                DateAdded = DateTimeOffset.Now.AddDays(-5)
-            },
-            new BookmarkModel()
-            {
-                Identifier = Guid.NewGuid(),
-                Name = "Example Bookmark 3",
-                Description = "Yet another example bookmark.",
-                Url = new Uri("https://example.com/3"),
-                DateAdded = DateTimeOffset.Now.AddDays(-1)
-            },
-            new BookmarkModel()
-            {
-                Identifier = Guid.NewGuid(),
-                Name = "Example Bookmark 4",
-                Description = "More example bookmarks.",
-                Url = new Uri("https://example.com/4"),
-                DateAdded = DateTimeOffset.Now
-            },
-            new BookmarkModel()
-            {
-                Identifier = Guid.NewGuid(),
-                Name = "Example Bookmark 5",
-                Description = "The last example bookmark.",
-                Url = new Uri("https://example.com/5"),
-                DateAdded = DateTimeOffset.Now.AddHours(-12)
-            },
-            new BookmarkModel()
-            {
-                Identifier = Guid.NewGuid(),
-                Name = "Example Bookmark 6",
-                Description = "An additional example bookmark.",
-                Url = new Uri("https://example.com/6"),
-                DateAdded = DateTimeOffset.Now.AddHours(-6)
-            }
-        ];
+        _bookmarksRepository = bookmarksRepository ?? throw new ArgumentNullException(nameof(bookmarksRepository));
+    }
+
+    public override async Task OnInitializedAsync()
+    {
+        OperationResult<BookmarkList> result = await  _bookmarksRepository.LoadAsync().ConfigureAwait(false);
+        if (result.IsSuccess && result.HasContent)
+        {
+            this.Bookmarks = result.Content.Articles.ToList();
+        }
     }
 
     [RelayCommand]
-    private void OpenBookmark(BookmarkModel bookmark)
+    private void OpenBookmark(Bookmark bookmark)
     {
-
+       throw new NotImplementedException();
     }
-
-    [RelayCommand]
-    private void DeleteBookmark(BookmarkModel bookmark)
-    {
-
-    }
-}
-
-public sealed record BookmarkModel
-{
-    public required Guid Identifier { get; init; }
-    public required string Name { get; init; }
-    public required string Description { get; init; }
-    public required Uri Url { get; init; }
-    public required DateTimeOffset DateAdded { get; init; }
 }

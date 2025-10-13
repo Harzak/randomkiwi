@@ -29,6 +29,11 @@
     <Color x:Key="OffBlack">#101418</Color>
     <Color x:Key="Red">#D52515</Color>
 
+    <Color x:Key="InfoBlue">#2196F3</Color>
+    <Color x:Key="SuccessGreen">#4CAF50</Color>
+    <Color x:Key="WarningOrange">#FF9800</Color>
+    <Color x:Key="ErrorRed">#F44336</Color>
+
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>
     <Color x:Key="Gray300">#ACACAC</Color>
@@ -45,6 +50,11 @@
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}" />
 
     <SolidColorBrush x:Key="KiwiBrush" Color="{StaticResource Kiwi}" />
+
+    <SolidColorBrush x:Key="InfoBlueBrush" Color="{StaticResource InfoBlue}" />
+    <SolidColorBrush x:Key="SuccessGreenBrush" Color="{StaticResource SuccessGreen}" />
+    <SolidColorBrush x:Key="WarningOrangeBrush" Color="{StaticResource WarningOrange}" />
+    <SolidColorBrush x:Key="ErrorRedBrush" Color="{StaticResource ErrorRed}" />
 
     <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}" />
     <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}" />
