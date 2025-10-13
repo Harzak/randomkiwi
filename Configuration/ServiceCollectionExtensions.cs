@@ -81,9 +81,9 @@ public static class ServiceCollectionExtensions
     private static void AddViewModels(this IServiceCollection services)
     {
         services.AddSingleton<MainViewModel>();
-        services.AddSingleton<RandomWikipediaViewModel>();
+        services.AddSingleton<RandomArticleViewModel>();
         services.AddSingleton<SettingsViewModel>();
-        services.AddSingleton<BookmarksViewModel>();
+        services.AddSingleton<BookmarkListViewModel>();
         services.AddTransient<WikipediaWebViewViewModel>();
     }
 

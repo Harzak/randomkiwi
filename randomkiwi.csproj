@@ -83,6 +83,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <Compile Update="Views\BookmarkListView.xaml.cs">
+	    <DependentUpon>BookmarkListView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\MainView.xaml.cs">
 	    <DependentUpon>MainView.xaml</DependentUpon>
 	  </Compile>
@@ -91,8 +94,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>Languages.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\RandomWikipediaView.xaml.cs">
-	    <DependentUpon>RandomWikipediaView.xaml</DependentUpon>
+	  <Compile Update="Views\RandomArticleView.xaml.cs">
+	    <DependentUpon>RandomArticleView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\RandomArticleSettingsView.xaml.cs">
+	    <DependentUpon>RandomArticleSettingsView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	
@@ -104,6 +110,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <MauiXaml Update="Views\BookmarkView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\MainView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -113,13 +122,13 @@
 	  <MauiXaml Update="Resources\Styles\AppStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\BookmarksView.xaml">
+	  <MauiXaml Update="Views\BookmarkListView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SettingsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\WikipediaRandomSettingsView.xaml">
+	  <MauiXaml Update="Views\RandomArticleSettingsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

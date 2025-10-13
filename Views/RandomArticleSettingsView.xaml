@@ -1,4 +1,4 @@
-<Grid x:Class="randomkiwi.Views.WikipediaRandomSettingsView"
+<Grid x:Class="randomkiwi.Views.RandomArticleSettingsView"
       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
       xmlns:models="clr-namespace:randomkiwi.Models"
@@ -6,7 +6,7 @@
       xmlns:res="clr-namespace:randomkiwi.Resources"
       xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
       xmlns:viewModels="clr-namespace:randomkiwi.ViewModels"
-      x:DataType="viewModels:WikipediaRandomSettingsViewModel"
+      x:DataType="viewModels:RandomArticleSettingsViewModel"
       BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
                                         Dark={StaticResource DarkBackground}}"
       RowDefinitions="Auto,*">

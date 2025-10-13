@@ -47,7 +47,7 @@ internal sealed class NavigationService : INavigationService
     /// <inheritdoc/>
     public async Task NavigateBackAsync(NavigationParameters? parameters = null)
     {
-        if (CurrentViewModel is RandomWikipediaViewModel && CanNavigateBackPage)
+        if (CurrentViewModel is RandomArticleViewModel && CanNavigateBackPage)
         {
             await NavigateBackPageAsync(parameters).ConfigureAwait(false);
         }

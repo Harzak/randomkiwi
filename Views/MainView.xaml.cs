@@ -14,20 +14,20 @@ public partial class MainView : ContentPage
         _viewModel = viewModel;
         BindingContext = viewModel;
 
-        WeakReferenceMessenger.Default.Register<ShowWikipediaRandomSettingsPopupMessage>(this, (r, m) =>
+        WeakReferenceMessenger.Default.Register<ShowRandomArticleSettingsPopupMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                popupWikipediaRandomSettings.BindingContext = m.ViewModel;
-                popupWikipediaRandomSettings.Show();
+                popupRandomArticleSettings.BindingContext = m.ViewModel;
+                popupRandomArticleSettings.Show();
             });
         });
 
-        WeakReferenceMessenger.Default.Register<ClosePopupWikipediaRandomSettingsMessage>(this, (r, m) =>
+        WeakReferenceMessenger.Default.Register<ClosePopupRandomArticleSettingsMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                popupWikipediaRandomSettings.IsOpen = false;
+                popupRandomArticleSettings.IsOpen = false;
             });
         });
 
@@ -66,10 +66,11 @@ public partial class MainView : ContentPage
 
         View? view = currentViewModel switch
         {
-            RandomWikipediaViewModel mainVM => new RandomWikipediaView { BindingContext = mainVM },
-            BookmarksViewModel bookmarksVM => new BookmarksView { BindingContext = bookmarksVM },
+            RandomArticleViewModel mainVM => new RandomArticleView { BindingContext = mainVM },
+            BookmarkListViewModel bookmarkListVM => new BookmarksListView { BindingContext = bookmarkListVM },
             SettingsViewModel settingsVM => new SettingsView { BindingContext = settingsVM },
-            _ => null
+            BookmarkViewModel bookmarkVM => new BookmarkView { BindingContext = bookmarkVM },
+            _ => throw new NotImplementedException($"No view implemented for view model type {currentViewModel.GetType().FullName}"),
         };
         MainThread.BeginInvokeOnMainThread(() =>
         {

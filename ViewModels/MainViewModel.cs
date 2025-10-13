@@ -41,7 +41,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToHomeAsync()
     {
-        IRoutableViewModel mainViewModel = _serviceProvider.GetRequiredService<RandomWikipediaViewModel>();
+        IRoutableViewModel mainViewModel = _serviceProvider.GetRequiredService<RandomArticleViewModel>();
         await _navigationService.NavigateToAsync(mainViewModel).ConfigureAwait(false);
         IsFlyoutPresented = false;
     }
@@ -49,7 +49,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToBookmarksAsync()
     {
-        IRoutableViewModel bookmarksViewModel = _serviceProvider.GetRequiredService<BookmarksViewModel>();
+        IRoutableViewModel bookmarksViewModel = _serviceProvider.GetRequiredService<BookmarkListViewModel>();
         await _navigationService.NavigateToAsync(bookmarksViewModel).ConfigureAwait(false);
         IsFlyoutPresented = false;
     }

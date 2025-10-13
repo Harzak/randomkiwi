@@ -98,11 +98,11 @@
             </Border>
         </Grid>
 
-        <popup:SfPopup x:Name="popupWikipediaRandomSettings" HeightRequest="550" ShowFooter="False"
+        <popup:SfPopup x:Name="popupRandomArticleSettings" HeightRequest="550" ShowFooter="False"
                        ShowHeader="False" StaysOpen="True">
             <popup:SfPopup.ContentTemplate>
                 <DataTemplate>
-                    <views:WikipediaRandomSettingsView />
+                    <views:RandomArticleSettingsView />
                 </DataTemplate>
             </popup:SfPopup.ContentTemplate>
         </popup:SfPopup>

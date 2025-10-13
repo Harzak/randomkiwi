@@ -13,3 +13,4 @@ global using randomkiwi.Navigation.Context;
 global using randomkiwi.Navigation.Guards;
 global using randomkiwi.Repositories;
 global using randomkiwi.Utilities.Results;
+global using randomkiwi.Events;

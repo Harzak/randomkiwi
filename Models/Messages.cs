@@ -20,12 +20,12 @@ internal sealed record NavigationCompletedMessage(string Url, bool IsSuccess);
 /// <summary>
 /// Represents a message used to display the Wikipedia Random Settings popup.
 /// </summary>
-internal sealed record ShowWikipediaRandomSettingsPopupMessage(ObservableObject ViewModel);
+internal sealed record ShowRandomArticleSettingsPopupMessage(ObservableObject ViewModel);
 
 /// <summary>
 /// Represents a message used to signal the closure of a popup related to Wikipedia random settings.
 /// </summary>
-internal sealed record ClosePopupWikipediaRandomSettingsMessage();
+internal sealed record ClosePopupRandomArticleSettingsMessage();
 
 /// <summary>
 /// Represents a notification to be displayed in the UI.

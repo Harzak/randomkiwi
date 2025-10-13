@@ -11,14 +11,14 @@ using randomkiwi.Utilities.Results;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
+public sealed partial class RandomArticleViewModel : BaseRoutableViewModel
 {
     private readonly IArticleCatalog _articleCatalog;
     private readonly ILoadingService _loadingService;
     private readonly IBookmarksRepository _bookmarksRepository;
     private readonly IAppConfiguration _appConfiguration;
 
-    public override string Name => nameof(RandomWikipediaViewModel);
+    public override string Name => nameof(RandomArticleViewModel);
     public override bool CanBeConfigured => true;
     public bool IsInError => !string.IsNullOrWhiteSpace(this.ErrorMessage);
     public bool IsLoaded => !this.IsLoading && !this.IsInError;
@@ -44,7 +44,7 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
     [NotifyPropertyChangedFor(nameof(IsInError))]
     private string? _errorMessage;
 
-    public RandomWikipediaViewModel(
+    public RandomArticleViewModel(
         WikipediaWebViewViewModel webViewViewModel,
         IArticleCatalog articleCatalog,
         ILoadingService loadingService,
@@ -126,8 +126,8 @@ public sealed partial class RandomWikipediaViewModel : BaseRoutableViewModel
 
     public override Task OpenConfigurationAsync()
     {
-        WikipediaRandomSettingsViewModel vm = new(_appConfiguration, callback: OnArticleDetailChanged);
-        WeakReferenceMessenger.Default.Send(new ShowWikipediaRandomSettingsPopupMessage(vm));
+        RandomArticleSettingsViewModel vm = new(_appConfiguration, callback: OnArticleDetailChanged);
+        WeakReferenceMessenger.Default.Send(new ShowRandomArticleSettingsPopupMessage(vm));
         return Task.CompletedTask;
     }
 

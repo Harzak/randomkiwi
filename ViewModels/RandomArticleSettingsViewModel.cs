@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace randomkiwi.ViewModels;
 
-public sealed partial class WikipediaRandomSettingsViewModel : ObservableObject
+public sealed partial class RandomArticleSettingsViewModel : ObservableObject
 {
     private readonly IAppConfiguration _appConfiguration;
     private readonly Action<EArticleDetail>? _callback;
@@ -17,7 +17,7 @@ public sealed partial class WikipediaRandomSettingsViewModel : ObservableObject
     [ObservableProperty]
     private EArticleDetail _selectedArticleDetail;
 
-    public WikipediaRandomSettingsViewModel(IAppConfiguration appConfiguration, Action<EArticleDetail>? callback)
+    public RandomArticleSettingsViewModel(IAppConfiguration appConfiguration, Action<EArticleDetail>? callback)
     {
         _appConfiguration = appConfiguration;
         _callback = callback;
@@ -33,6 +33,6 @@ public sealed partial class WikipediaRandomSettingsViewModel : ObservableObject
             await _appConfiguration.SaveAsync().ConfigureAwait(false);
             _callback?.Invoke(this.SelectedArticleDetail);
         }
-        WeakReferenceMessenger.Default.Send(new ClosePopupWikipediaRandomSettingsMessage());
+        WeakReferenceMessenger.Default.Send(new ClosePopupRandomArticleSettingsMessage());
     }
 }
