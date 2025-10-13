@@ -6,8 +6,7 @@ namespace randomkiwi.ViewModels;
 public sealed partial class BookmarkListViewModel : BaseRoutableViewModel
 {
     private readonly IBookmarksRepository _bookmarksRepository;
-    private readonly ILoadingService _loadingService;
-    private readonly WikipediaWebViewViewModel _webViewViewModel;
+    private readonly IViewModelFactory _viewModelFactory;
 
     public override string Name => nameof(BookmarkListViewModel);
 
@@ -18,16 +17,13 @@ public sealed partial class BookmarkListViewModel : BaseRoutableViewModel
     private List<Bookmark>? _bookmarks;
 
     public BookmarkListViewModel(
-        INavigationService navigationService,
-        ILoadingService loadingService,
-        IBookmarksRepository bookmarksRepository,
-
-        WikipediaWebViewViewModel webViewViewModel)
+        INavigationService navigationService, 
+        IBookmarksRepository bookmarksRepository, 
+        IViewModelFactory viewModelFactory)
     : base(navigationService)
     {
         _bookmarksRepository = bookmarksRepository ?? throw new ArgumentNullException(nameof(bookmarksRepository));
-        _loadingService = loadingService ?? throw new ArgumentNullException(nameof(loadingService));
-        _webViewViewModel = webViewViewModel ?? throw new ArgumentNullException(nameof(webViewViewModel));
+        _viewModelFactory = viewModelFactory ?? throw new ArgumentNullException(nameof(viewModelFactory));
     }
 
     public override async Task OnInitializedAsync()
@@ -42,9 +38,7 @@ public sealed partial class BookmarkListViewModel : BaseRoutableViewModel
     [RelayCommand]
     private async Task OpenBookmark(Bookmark bookmark)
     {
-#pragma warning disable CA2000 // Dispose objects before losing scope
-        IRoutableViewModel bookmarksViewModel = new BookmarkViewModel(bookmark, _webViewViewModel, base.NavigationService, _loadingService);
-#pragma warning restore CA2000 // Dispose objects before losing scope
+        IRoutableViewModel bookmarksViewModel = _viewModelFactory.CreateBookmarkViewModel(bookmark);
         await base.NavigationService.NavigateToAsync(bookmarksViewModel).ConfigureAwait(false);
     }
 }
