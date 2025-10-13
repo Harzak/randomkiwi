@@ -17,8 +17,8 @@ public sealed partial class BookmarkListViewModel : BaseRoutableViewModel
     private List<Bookmark>? _bookmarks;
 
     public BookmarkListViewModel(
-        INavigationService navigationService, 
-        IBookmarksRepository bookmarksRepository, 
+        INavigationService navigationService,
+        IBookmarksRepository bookmarksRepository,
         IViewModelFactory viewModelFactory)
     : base(navigationService)
     {

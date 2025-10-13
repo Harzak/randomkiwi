@@ -3,7 +3,7 @@
 /// <summary>
 /// Interface for view models that can be navigated to and managed by the navigation service.
 /// </summary>
-public interface IRoutableViewModel : IRoutableItem,  IDisposable
+public interface IRoutableViewModel : IRoutableItem, IDisposable
 {
     /// <summary>
     /// Gets a value indicating whether the viewmodel can be configured by the user.

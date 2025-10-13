@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Interfaces;
+﻿namespace randomkiwi.Interfaces;
 
 /// <summary>
 /// Defines methods for managing and persist bookmarks, including loading, saving, and checking bookmark status.

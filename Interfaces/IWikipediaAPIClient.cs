@@ -1,6 +1,4 @@
-﻿using randomkiwi.Utilities.Results;
-
-namespace randomkiwi.Interfaces;
+﻿namespace randomkiwi.Interfaces;
 
 /// <summary>
 /// Provides functionality to interact with the Wikipedia API.

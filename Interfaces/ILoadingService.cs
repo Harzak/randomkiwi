@@ -1,11 +1,4 @@
-﻿using randomkiwi.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Interfaces;
+﻿namespace randomkiwi.Interfaces;
 
 /// <summary>
 /// Provides functionality to manage and track loading states within an application.

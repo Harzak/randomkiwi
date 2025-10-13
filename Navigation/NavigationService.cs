@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Navigation;
+﻿namespace randomkiwi.Navigation;
 
 /// <summary>
 /// Unified navigation service that coordinates ViewModel and Web navigation

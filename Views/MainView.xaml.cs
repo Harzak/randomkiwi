@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging;
-using randomkiwi.ViewModels;
 using randomkiwi.Views;
 
 namespace randomkiwi;
@@ -94,7 +93,7 @@ public partial class MainView : ContentPage
                 _ => (Color)Application.Current!.Resources["InfoBlue"]
             };
         });
-  
+
         await NotificationContainer.FadeTo(1, 500).ConfigureAwait(false);
         await Task.Delay(e.DurationMs).ConfigureAwait(false);
         await NotificationContainer.FadeTo(0, 500).ConfigureAwait(false);

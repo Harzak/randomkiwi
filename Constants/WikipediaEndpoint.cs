@@ -12,7 +12,7 @@ internal static class WikipediaEndpoint
     /// <summary>
     /// Represents the format string for constructing a query to the MediaWiki API.
     /// </summary>
-    internal static readonly CompositeFormat ENDPOINT_FORMAT_QUERY_PAGEPROPS 
+    internal static readonly CompositeFormat ENDPOINT_FORMAT_QUERY_PAGEPROPS
         = CompositeFormat.Parse("/w/api.php" +
             "?action=query" +
             "&generator=random" +

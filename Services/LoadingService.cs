@@ -1,12 +1,4 @@
-﻿using randomkiwi.Events;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Services;
+﻿namespace randomkiwi.Services;
 
 /// <summary>
 /// Provides functionality to manage and track loading operations, including debouncing and ensuring a minimum display duration.

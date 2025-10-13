@@ -1,6 +1,4 @@
-﻿using randomkiwi.Utilities.Results;
-
-namespace randomkiwi.Interfaces;
+﻿namespace randomkiwi.Interfaces;
 
 /// <summary>
 /// Represents a catalog of articles that allows navigation, bookmarking

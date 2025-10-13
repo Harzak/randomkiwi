@@ -1,6 +1,4 @@
-﻿using randomkiwi.Utilities.Results;
-
-namespace randomkiwi.Interfaces;
+﻿namespace randomkiwi.Interfaces;
 
 /// <summary>
 /// Defines the contract for HTTP service operations providing asynchronous GET and POST functionality.

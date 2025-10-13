@@ -1,8 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using randomkiwi.Navigation.ViewModels;
 using randomkiwi.Navigation.WebPage;
-using randomkiwi.Repositories;
 using randomkiwi.Services.Http;
 using System.Net;
 
@@ -58,14 +56,14 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IJsonStorage<UserPreferenceModel>>(provider =>
         {
             return new JsonStorage<UserPreferenceModel>(
-                appDirectory, 
+                appDirectory,
                 AppConsts.USER_PREFERENCES_FILE,
                 provider.GetRequiredService<ILogger<JsonStorage<UserPreferenceModel>>>());
         });
         services.AddSingleton<IJsonStorage<BookmarkList>>(provider =>
         {
             return new JsonStorage<BookmarkList>(
-                appDirectory, 
+                appDirectory,
                 AppConsts.BOOKMARKS_FILE,
                 provider.GetRequiredService<ILogger<JsonStorage<BookmarkList>>>());
         });

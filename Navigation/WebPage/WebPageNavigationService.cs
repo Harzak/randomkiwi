@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomkiwi.Navigation.WebPage;
+﻿namespace randomkiwi.Navigation.WebPage;
 
 public sealed class WebPageNavigationService : IWebPageNavigationService
 {
@@ -31,7 +25,7 @@ public sealed class WebPageNavigationService : IWebPageNavigationService
     {
         ArgumentNullException.ThrowIfNull(url);
 
-        WebNavigationItem item = new (url);
+        WebNavigationItem item = new(url);
         NavigationContext context = new(parameters);
         await _handler.PushAsync(item, context).ConfigureAwait(false);
     }

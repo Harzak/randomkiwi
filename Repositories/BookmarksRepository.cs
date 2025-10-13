@@ -30,7 +30,7 @@ public sealed class BookmarksRepository : IBookmarksRepository
         }
         return result;
     }
-    
+
     /// <inheritdoc/>
     public async Task<OperationResult> SaveAsync(Bookmark bookmarks)
     {
