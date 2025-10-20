@@ -149,7 +149,7 @@ internal sealed class WikipediaArticleCatalog : IArticleCatalog
         {
             targetPoolSize = _settingsProvider.ArticleCatalog.PoolThreshold;
         }
-            
+
         OperationResult result = new();
         int added = 0;
 

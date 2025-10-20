@@ -2,7 +2,6 @@
 using randomkiwi.Navigation.ViewModels;
 using randomkiwi.Navigation.WebPage;
 using randomkiwi.Services.Http;
-using randomkiwi.Configuration.Models;
 using System.Net;
 
 namespace randomkiwi.Configuration;

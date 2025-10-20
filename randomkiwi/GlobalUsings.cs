@@ -1,4 +1,5 @@
 ﻿global using randomkiwi.Configuration;
+global using randomkiwi.Configuration.Models;
 global using randomkiwi.Constants;
 global using randomkiwi.Dto;
 global using randomkiwi.Events;
@@ -15,4 +16,3 @@ global using randomkiwi.Services;
 global using randomkiwi.Utilities;
 global using randomkiwi.Utilities.Results;
 global using randomkiwi.ViewModels;
-global using randomkiwi.Configuration.Models;
